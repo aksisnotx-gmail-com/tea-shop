@@ -24,6 +24,6 @@ fi
 # 运行新的容器
 echo "Running the container..."
 docker run -d -p $PORT:8080 -u 0 -v $JAR_DIR:$JAR_DIR  --name $CONTAINER_NAME openjdk:17 java -jar -Duser.timezone=GMT+08 $JAR_DIR/application-1.0.0.jar $KEY
-docker run -d -p 8080:8080 -u 0 -v /home/servers/tea-shop:/home/servers/tea-shop  --name tea-shop-web openjdk:17 java -jar -Duser.timezone=GMT+08 /home/servers/tea-shop/application-1.0.0.jar
+#docker run -d -p 8080:8080 -u 0 -v /home/servers/tea-shop:/home/servers/tea-shop  --name tea-shop-web openjdk:17 java -jar -Duser.timezone=GMT+08 /home/servers/tea-shop/application-1.0.0.jar
 
 echo "Deployment complete! The app is running on port $PORT."
