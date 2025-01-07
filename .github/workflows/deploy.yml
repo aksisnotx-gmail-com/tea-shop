@@ -46,5 +46,11 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PWD }}
 
-          # todo 后续连接远程服务器部署项目,前端项目部署
+      - name: 执行服务端脚本
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: /bin/sh /home/servers/tea-shop/deploy.sh ${{secrets.MPW_KEY}}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PWD }}
 
