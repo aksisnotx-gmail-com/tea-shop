@@ -49,3 +49,6 @@ test
 /application.iml
 /doc/“绾青丝”汉服社微信小程序的设计与实现1.pptx
 /logs/
+/back-end/application/.flattened-pom.xml
+/back-end/.flattened-pom.xml
+/back-end/sdk/.flattened-pom.xml
