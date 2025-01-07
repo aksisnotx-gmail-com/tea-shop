@@ -61,9 +61,9 @@ springdoc:
     #自定义swagger前端请求路径，输入http：127.0.0.1:8080/swagger会自动重定向到swagger页面注意是path不是url
     path: /swagger
   group-configs:
-    - group: 测试API
+    - group: api
       packages-to-scan:
-        - com.aks.scaffold.controller
+        - aks.com.web.controller
 
   # knife4j的增强配置，不需要增强可以不配
 knife4j:
