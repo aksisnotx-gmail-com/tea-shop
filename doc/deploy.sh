@@ -12,7 +12,7 @@ KEY="$1"
 
 # 设置变量
 CONTAINER_NAME="tea-shop-web"
-PORT=8080  # 你可以根据实际需要调整端口
+PORT=8080  # 根据实际需要调整端口
 JAR_DIR="/home/servers/tea-shop"
 
 # 停止并删除旧的容器（如果存在）
@@ -21,11 +21,9 @@ if [ $(docker ps -a -q -f name=$CONTAINER_NAME) ]; then
     docker rm -f $CONTAINER_NAME  # 停止并删除容器
 fi
 
-echo "rename jar file"
-mv $JAR_DIR/.application-1.0.0.jar $JAR_DIR/application-1.0.0.jar
-
 # 运行新的容器
 echo "Running the container..."
 docker run -d -p $PORT:8080 -u 0 -v $JAR_DIR:$JAR_DIR  --name $CONTAINER_NAME openjdk:17 java -jar -Duser.timezone=GMT+08 $JAR_DIR/application-1.0.0.jar $KEY
+docker run -d -p 8080:8080 -u 0 -v /home/servers/tea-shop:/home/servers/tea-shop  --name tea-shop-web openjdk:17 java -jar -Duser.timezone=GMT+08 /home/servers/tea-shop/application-1.0.0.jar
 
 echo "Deployment complete! The app is running on port $PORT."
