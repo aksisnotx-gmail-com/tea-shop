@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Indexed;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.Arrays;
+
 
 /**
  * @author xxl
@@ -26,6 +28,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class Application {
 
     public static void main(String[] args) {
+        if (args.length < 1 || Arrays.stream(args).noneMatch(t -> t.contains("mpw.key"))) {
+            throw new RuntimeException("缺少密钥");
+        }
         try {
             SpringApplication.run(Application.class, args);
             log.info("项目启动成功(ง ˙o˙)ว");
