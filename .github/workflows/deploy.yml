@@ -51,6 +51,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PWD }}
+          atomicPut: 'true'
 
 #      - name: 执行服务端脚本
 #        uses: garygrossgarten/github-action-ssh@release
