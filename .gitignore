@@ -52,3 +52,4 @@ test
 /back-end/application/.flattened-pom.xml
 /back-end/.flattened-pom.xml
 /back-end/sdk/.flattened-pom.xml
+/back-end/sdk/sdk.iml
