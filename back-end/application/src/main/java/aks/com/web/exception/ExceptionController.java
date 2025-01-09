@@ -1,4 +1,4 @@
-package aks.com.web.controller.exception;
+package aks.com.web.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import aks.com.sdk.exception.GlobalException;
