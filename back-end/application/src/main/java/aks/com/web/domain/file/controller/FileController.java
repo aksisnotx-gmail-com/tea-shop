@@ -1,3 +1,4 @@
+
 package aks.com.web.domain.file.controller;
 
 import aks.com.sdk.resp.RespEntity;
@@ -13,21 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * @author jamesaks
- * @since 2025/1/8
+ * @author james.aks
+ * @since 2025-01-09 16:35:43
  */
-@Tag(name = "文件接口")
+@Tag(name = "sys_file api")
 @RestController
-@RequestMapping("/file")
+@RequestMapping("file")
 @RequiredArgsConstructor
 public class FileController {
 
-    private final FileService fileService;
+    private final FileService service;
 
-    @GetMapping("/test")
-    @Operation(summary = "测试接口")
-    public RespEntity<List<FileEntity>> test() {
-        return RespEntity.success(fileService.list());
+    @GetMapping("list")
+    @Operation(summary = "获取文件列表")
+    public RespEntity<List<FileEntity>> list() {
+        return RespEntity.success(service.list());
     }
-
 }
