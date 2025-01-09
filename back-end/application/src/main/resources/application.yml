@@ -104,6 +104,9 @@ logging:
   file:
     path: @log.path@
 
+file:
+  save-path: @file.save.path@
+
 # 身份验证
 authorization:
   enable: false

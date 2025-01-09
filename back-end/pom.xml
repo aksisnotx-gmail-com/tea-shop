@@ -167,6 +167,7 @@
                 <spring.active>dev</spring.active>
                 <!--    随环境参数在此填写，自定义标签，使用@标签名@       -->
                 <log.path>/Applications/jetbrains/IDEA/jiedan/tea-shop/logs</log.path>
+                <file.save.path>/Applications/jetbrains/IDEA/jiedan/tea-shop/logs/files/</file.save.path>
                 <knife4j.enable>false</knife4j.enable>
             </properties>
         </profile>
@@ -175,6 +176,7 @@
             <properties>
                 <spring.active>prod</spring.active>
                 <log.path>/home/servers/tea-shop/logs</log.path>
+                <file.save.path>/home/servers/tea-shop/files/</file.save.path>
                 <knife4j.enable>false</knife4j.enable>
             </properties>
             <activation>
