@@ -24,8 +24,9 @@ public class RedisConfig {
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> redisTemplate  = new RedisTemplate<>();
-        //支持事务
-        redisTemplate.setEnableTransactionSupport(true);
+        //支持事务,TODO 隐患在方法上加Transactional目的是控制mysql事务但是使用这个注解的方法使用了redis则也会进入事务，但是redis的事务中你先插入之后再查询插入的值是查不到的，因为没有落到库中
+        //mysql是落到库中的
+        //redisTemplate.setEnableTransactionSupport(true);
         //json方式序列化
         Jackson2JsonRedisSerializer<Object> jackson = new Jackson2JsonRedisSerializer<>(Object.class);
         redisTemplate.setConnectionFactory(factory);
