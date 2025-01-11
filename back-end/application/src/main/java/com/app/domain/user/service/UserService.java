@@ -18,6 +18,7 @@ import com.app.domain.user.mapper.UserMapper;
 import com.app.domain.user.param.WeChatLoginParam;
 import com.app.domain.user.entity.UserEntity;
 import com.app.domain.wallet.service.WalletService;
+import com.app.toolkit.redis.RedisUtils;
 import com.sdk.exception.GlobalException;
 import com.sdk.resp.RespEntity;
 import com.sdk.util.asserts.AssertUtils;
@@ -57,7 +58,7 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
     // 微信提供的API接口URL，需要替换为实际值
     private static final String WECHAT_LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session";
 
-    @Transactional(rollbackFor = RuntimeException.class)
+    //@Transactional(rollbackFor = RuntimeException.class)
     public UserEntity loginWithWechat(WeChatLoginParam param) {
         UserEntity entity = new UserEntity();
         entity.setPhoneNumber("15156246017");
