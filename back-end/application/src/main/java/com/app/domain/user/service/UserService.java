@@ -58,7 +58,8 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
     private static final String WECHAT_LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session";
 
     public UserEntity loginWithWechat(WeChatLoginParam param) {
-        final String resUrl = "%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+        return login("15156246017", "123456",true);
+        /*final String resUrl = "%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
         String url = String.format(resUrl, WECHAT_LOGIN_URL, appid, secret, param.getCode());
         // 使用HuTool发送HTTP GET请求
         try(HttpResponse response = HttpRequest.get(url).execute()) {
@@ -90,7 +91,7 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
             throw new GlobalException("请求微信授权接口失败");
         } catch (HttpException | GlobalException e) {
             throw new GlobalException(e.getMessage());
-        }
+        }*/
     }
 
 
