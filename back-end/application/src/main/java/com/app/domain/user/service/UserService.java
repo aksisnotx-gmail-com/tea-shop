@@ -64,7 +64,10 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
         entity.setNickname("test");
         entity.setPwd("123456");
         entity.setGender(1);
-        register(entity, true);
+        UserEntity user = getUserByPhoneNumber(entity.getPhoneNumber());
+        if (Objects.isNull(user)) {
+            register(entity, true);
+        }
         return login("15156246017", "123456",true);
         /*final String resUrl = "%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
         String url = String.format(resUrl, WECHAT_LOGIN_URL, appid, secret, param.getCode());
