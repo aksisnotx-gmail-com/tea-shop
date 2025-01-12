@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.util.List;
@@ -43,8 +44,7 @@ public class UserEntity extends Entity {
 
     //昵称
     @Schema(description = "昵称")
-    @JsonView({INSERT.class,UPDATE.class})
-    @NotBlank(message = "昵称不能为空",groups = {INSERT.class,UPDATE.class})
+    @JsonView({UPDATE.class})
     private String nickname;
 
     //头像url
@@ -53,9 +53,10 @@ public class UserEntity extends Entity {
     private String avatar;
 
     //坐标
-    @Schema(description = "坐标")
-    @JsonView({IGNORE.class,UPDATE.class})
-    private String coordinate;
+    @Schema(description = "用户名")
+    @JsonView({UPDATE.class,INSERT.class})
+    @NotBlank(message = "用户名不能为空",groups = {INSERT.class,UPDATE.class})
+    private String username;
 
     //收货地址(可能是多个)
     @TableField(typeHandler = JacksonTypeHandler.class)
@@ -65,17 +66,8 @@ public class UserEntity extends Entity {
     //手机号码
     @Schema(description = "手机号码")
     @JsonView({INSERT.class, LOGIN.class})
-    @NotBlank(message = "手机号码不能为空",groups = {INSERT.class, LOGIN.class})
+    @Length(min = 11, max = 11, message = "手机号格式不正确",groups = {INSERT.class, LOGIN.class})
     private String phoneNumber;
-
-    @Schema(description = "邮箱")
-    @JsonView({UPDATE.class})
-    private String email;
-
-    //是否微信登录 1 是 0 否
-    @Schema(description = "是否微信登录 1 是 0 否")
-    @JsonView({IGNORE.class})
-    private Integer isWechatLogin;
 
     @TableField(exist = false)
     @JsonView({IGNORE.class})
@@ -84,5 +76,5 @@ public class UserEntity extends Entity {
     //0 是男 1 是女
     @JsonView({UPDATE.class})
     @Schema(description = "性别 0 是男 1 是女")
-    public Integer gender;
+    private Integer gender;
 }

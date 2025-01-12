@@ -43,91 +43,27 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserService extends AbstractService<UserMapper,UserEntity> {
 
-    @Value("${wechat.id}")
-    private String appid;
-
-    @Value("${wechat.secret}")
-    private String secret;
-
     private final WalletService walletService;
 
-    private static final Integer WECHAT_LOGIN = 1;
-
-    private static final Integer UN_WECHAT_LOGIN = 0;
-
-    // 微信提供的API接口URL，需要替换为实际值
-    private static final String WECHAT_LOGIN_URL = "https://api.weixin.qq.com/sns/jscode2session";
-
-    @Transactional(rollbackFor = RuntimeException.class)
-    public UserEntity loginWithWechat(WeChatLoginParam param) {
-        UserEntity entity = new UserEntity();
-        entity.setPhoneNumber("15156246017");
-        entity.setNickname("test");
-        entity.setPwd("15156246017");
-        entity.setGender(1);
+    public UserEntity login(UserEntity entity,boolean isWechat) {
         UserEntity user = getUserByPhoneNumber(entity.getPhoneNumber());
-        if (Objects.isNull(user)) {
-            register(entity, true);
-        }
-        return login("15156246017", "15156246017",true);
-        /*final String resUrl = "%s?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
-        String url = String.format(resUrl, WECHAT_LOGIN_URL, appid, secret, param.getCode());
-        // 使用HuTool发送HTTP GET请求
-        try(HttpResponse response = HttpRequest.get(url).execute()) {
-            if (response.isOk()) {
-                // 解析响应内容为JSON对象
-                JSONObject result = JSONUtil.parseObj(response.body());
-                // 检查是否存在错误码
-                if (result.containsKey("errcode")) {
-                    // 处理错误情况，例如打印日志、抛出异常等
-                    throw new GlobalException("微信授权失败: " + result);
-                }
-                //如果手机号不存在则注册
-                UserEntity user = getUserByPhoneNumber(param.getPhoneNumber());
-                if (Objects.isNull(user)) {
-                    //创建用户
-                    UserEntity entity = new UserEntity();
-                    BeanUtil.copyProperties(param, entity);
-                    entity.setId(param.getPhoneNumber());
-                    entity.setPwd(param.getPhoneNumber());
-                    //注册
-                    register(entity,true);
-                    //登录
-                    return login(entity.getPhoneNumber(), entity.getPwd(),true);
-                }else {
-                    //登录
-                    return login(user.getPhoneNumber(), user.getPwd(),true);
-                }
-            }
-            throw new GlobalException("请求微信授权接口失败");
-        } catch (HttpException | GlobalException e) {
-            throw new GlobalException(e.getMessage());
-        }*/
-    }
-
-
-    public UserEntity login(String phoneNumber, String password,Boolean isWeChatLogin) {
-        UserEntity user = getUserByPhoneNumber(phoneNumber);
         AssertUtils.notNull(user, "用户不存在");
-        if (!isWeChatLogin) {
-            AssertUtils.assertTrue(!user.getIsWechatLogin().equals(WECHAT_LOGIN), "前台用户请去注册");
-        }
-        //isWeChatLogin 微信登录则用手机号码解密
-        AssertUtils.assertTrue(MD5Utils.decrypt(isWeChatLogin ? phoneNumber : password,user.getPwd()), "密码错误");
+        AssertUtils.assertTrue((Role.BUYER.equals(user.getRole()) && isWechat) ||
+                Role.ADMIN.equals(user.getRole()) && !isWechat ,"登录错误");
+        AssertUtils.assertTrue(MD5Utils.decrypt(user.getPwd(),user.getPwd()), "密码错误");
         return LoginUser.store(user);
     }
 
     @Transactional(rollbackFor = RuntimeException.class)
-    public Boolean register(UserEntity param,boolean isWeChatLogin) {
+    public Boolean register(UserEntity param,boolean isWeChat) {
         UserEntity user = getUserByPhoneNumber(param.getPhoneNumber());
         AssertUtils.isNull(user, "用户已经存在");
-        param.setRole(isWeChatLogin ? Role.BUYER : Role.ADMIN);
-        param.setIsWechatLogin(isWeChatLogin ? WECHAT_LOGIN : UN_WECHAT_LOGIN);
+        param.setRole(isWeChat ? Role.BUYER : Role.ADMIN);
         param.setPwd(MD5Utils.encrypt(param.getPwd()));
         //保存用户
         boolean save = this.save(param);
         //前台角色初始化钱包
-        if (isWeChatLogin && save) {
+        if (isWeChat && save) {
             walletService.initWallet(param.getId());
         }
         return save;
@@ -137,9 +73,8 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
         UserEntity user = getById(param.getId());
         user.setNickname(param.getNickname());
         user.setAvatar(param.getAvatar());
-        user.setCoordinate(param.getCoordinate());
+        user.setUsername(param.getUsername());
         user.setShippingAddress(param.getShippingAddress());
-        user.setEmail(param.getEmail());
         user.setGender(param.getGender());
         //更新用户
         boolean update = this.updateById(param);

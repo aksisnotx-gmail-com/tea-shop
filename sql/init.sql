@@ -1,6 +1,6 @@
-create database if not exists clothes_mall_database;
+create database if not exists tea_shop_database;
 
-use clothes_mall_database;
+use tea_shop_database;
 
 create table sys_banner
 (
@@ -46,7 +46,7 @@ create table sys_discovery_comment
 create index sys_discovery_comments_fk
     on sys_discovery_comment (comment_id);
 
-create table sys_file
+create table if not exists sys_file
 (
     id          varchar(255) not null
         primary key,
@@ -154,15 +154,13 @@ create table sys_user
     role             varchar(255) null comment '角色',
     pwd              varchar(255) null comment '密码',
     nickname         varchar(255) null comment '昵称',
-    avatar           varchar(255) null,
-    coordinate       varchar(255) null comment '坐标',
+    avatar           varchar(255) null comment '头像',
+    username         varchar(255) null comment '用户名',
     create_time      timestamp    null,
     update_time      timestamp    null,
     shipping_address text         null comment '收货地址(可能是多个)',
     phone_number     varchar(255) null comment '手机号码',
-    is_wechat_login  int          null comment '是否为微信登录(1 是 0 不是)',
-    gender           int          null comment '0 是男 1是女',
-    email            varchar(255) null comment '邮箱'
+    gender           int          null comment '0 是男 1是女'
 )
     comment '用户表';
 
@@ -195,4 +193,8 @@ create table sys_wallet_record
 
 
 # 初始值
-insert into sys_product_type(type, id, update_time) values ('汉服','111111',NOW()),('汉元素','222222',NOW()),('配饰周边','333333',NOW())
+insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
+                                                           ('红茶','2',NOW()),
+                                                           ('白茶','3',NOW()),
+                                                           ('生茶','4',NOW()),
+                                                           ('熟茶','5',NOW())

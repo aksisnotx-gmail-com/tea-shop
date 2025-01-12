@@ -19,16 +19,22 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024/3/16
  */
 
-@Tag(name = "我的")
+@Tag(name = "[我的 & 登录] - 2025/01/12")
 @RequestMapping("/user")
 @RestController
 @Validated
 public class UserController extends Controller {
 
     @PostMapping("/auth/login/wechat")
-    @Operation(summary = "微信小程序授权登录")
-    public RespEntity<UserEntity> wechatLogin(@RequestBody WeChatLoginParam param) {
-        return RespEntity.success(userLoginService.loginWithWechat(param));
+    @Operation(summary = "微信小程序登录")
+    public RespEntity<UserEntity> wechatLogin(@RequestBody @JsonView({Entity.LOGIN.class}) UserEntity param) {
+        return RespEntity.success(userLoginService.login(param,true));
+    }
+
+    @PostMapping("/auth/register/wechat")
+    @Operation(summary = "微信小程序注册")
+    public RespEntity<?> wechatRegister(@RequestBody @JsonView({Entity.INSERT.class}) UserEntity param) {
+        return RespEntity.success(userLoginService.register(param,true));
     }
 
     @PostMapping("/auth/register")
@@ -41,7 +47,7 @@ public class UserController extends Controller {
     @PostMapping("/auth/login")
     @Operation(summary = "后台登录")
     public RespEntity<UserEntity> login(@RequestBody @JsonView({Entity.LOGIN.class}) @Validated(Entity.LOGIN.class) UserEntity param) {
-        return RespEntity.success(userLoginService.login(param.getPhoneNumber(),param.getPwd(),false));
+        return RespEntity.success(userLoginService.login(param,false));
     }
 
     @PostMapping("/modifyUserInfo")
@@ -59,21 +65,21 @@ public class UserController extends Controller {
 
     //查看用户列表
     @GetMapping("/list")
-    @Operation(summary = "查看用户列表 - [新增]")
+    @Operation(summary = "查看用户列表")
     public RespEntity<Page<UserEntity>> list() {
         return RespEntity.success(userLoginService.lambdaQuery().page(CommonPageRequestUtils.defaultPage()));
     }
 
     //查看用户详情信息
     @GetMapping("/info/{id}")
-    @Operation(summary = "查看用户信息 - [新增]")
+    @Operation(summary = "查看用户信息")
     public RespEntity<UserEntity> info(@PathVariable String id) {
         return RespEntity.success(userLoginService.getById(id));
     }
 
     //删除用户
     @GetMapping("/delete/{id}")
-    @Operation(summary = "删除用户 - [新增]")
+    @Operation(summary = "删除用户")
     public RespEntity<Boolean> delete(@PathVariable String id) {
         return RespEntity.success(userLoginService.deleteUserById(id));
     }

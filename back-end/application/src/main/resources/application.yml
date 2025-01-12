@@ -88,8 +88,3 @@ file:
   save:
     path: @save.path@
 
-# 微信小程序
-wechat:
-  id: wx6979ebcb29e15873
-  secret: 9719b9cd67ba4a478795e1f85e99acbf
-
