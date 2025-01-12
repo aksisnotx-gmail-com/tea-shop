@@ -198,3 +198,6 @@ insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
                                                            ('白茶','3',NOW()),
                                                            ('生茶','4',NOW()),
                                                            ('熟茶','5',NOW())
+
+insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
+values ('1','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','admin',NOW(),1);

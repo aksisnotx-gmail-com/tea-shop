@@ -45,28 +45,32 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
 
     private final WalletService walletService;
 
-    public UserEntity login(UserEntity entity,boolean isWechat) {
+    public UserEntity loginWithWechat(UserEntity entity) {
         UserEntity user = getUserByPhoneNumber(entity.getPhoneNumber());
         AssertUtils.notNull(user, "用户不存在");
-        AssertUtils.assertTrue((Role.BUYER.equals(user.getRole()) && isWechat) ||
-                Role.ADMIN.equals(user.getRole()) && !isWechat ,"登录错误");
-        AssertUtils.assertTrue(MD5Utils.decrypt(user.getPwd(),user.getPwd()), "密码错误");
+        AssertUtils.assertTrue(user.getRole().equals(Role.BUYER), "登录异常");
+        AssertUtils.assertTrue(MD5Utils.decrypt(entity.getPwd(),user.getPwd()), "密码错误");
         return LoginUser.store(user);
     }
 
-    @Transactional(rollbackFor = RuntimeException.class)
-    public Boolean register(UserEntity param,boolean isWeChat) {
+    public Boolean registerWithWechat(UserEntity param) {
         UserEntity user = getUserByPhoneNumber(param.getPhoneNumber());
         AssertUtils.isNull(user, "用户已经存在");
-        param.setRole(isWeChat ? Role.BUYER : Role.ADMIN);
+        param.setRole(Role.BUYER);
         param.setPwd(MD5Utils.encrypt(param.getPwd()));
         //保存用户
         boolean save = this.save(param);
-        //前台角色初始化钱包
-        if (isWeChat && save) {
-            walletService.initWallet(param.getId());
-        }
+        //小程序用户初始化钱包
+        walletService.initWallet(param.getId());
         return save;
+    }
+
+    public UserEntity login(UserEntity param) {
+        UserEntity one = this.lambdaQuery().eq(UserEntity::getUsername, param.getUsername()).eq(UserEntity::getRole, Role.ADMIN).one();
+        AssertUtils.notNull(one, "用户不存在");
+        AssertUtils.assertTrue(Role.ADMIN.equals(one.getRole()), "登录异常");
+        AssertUtils.assertTrue(MD5Utils.decrypt(param.getPwd(),one.getPwd()), "密码错误");
+        return LoginUser.store(one);
     }
 
     public UserEntity modifyUserInfo(UserEntity param) {

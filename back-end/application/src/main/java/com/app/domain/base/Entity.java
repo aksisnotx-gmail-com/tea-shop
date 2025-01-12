@@ -41,4 +41,5 @@ public class Entity implements Serializable {
     public interface UPDATE {}
 
     public interface LOGIN{}
+    public interface ADMIN_LOGIN{}
 }

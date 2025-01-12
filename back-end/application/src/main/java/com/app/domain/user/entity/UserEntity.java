@@ -38,8 +38,8 @@ public class UserEntity extends Entity {
 
     //密码
     @Schema(description = "密码")
-    @JsonView({INSERT.class, LOGIN.class})
-    @NotBlank(message = "密码不能为空",groups = {INSERT.class, LOGIN.class})
+    @JsonView({INSERT.class, LOGIN.class,ADMIN_LOGIN.class})
+    @NotBlank(message = "密码不能为空",groups = {INSERT.class, LOGIN.class,ADMIN_LOGIN.class})
     private String pwd;
 
     //昵称
@@ -54,8 +54,8 @@ public class UserEntity extends Entity {
 
     //坐标
     @Schema(description = "用户名")
-    @JsonView({UPDATE.class,INSERT.class})
-    @NotBlank(message = "用户名不能为空",groups = {INSERT.class,UPDATE.class})
+    @JsonView({UPDATE.class,INSERT.class,ADMIN_LOGIN.class})
+    @NotBlank(message = "用户名不能为空",groups = {INSERT.class,UPDATE.class,ADMIN_LOGIN.class})
     private String username;
 
     //收货地址(可能是多个)
@@ -74,7 +74,7 @@ public class UserEntity extends Entity {
     private String token;
 
     //0 是男 1 是女
-    @JsonView({UPDATE.class})
+    @JsonView({UPDATE.class,INSERT.class})
     @Schema(description = "性别 0 是男 1 是女")
     private Integer gender;
 }

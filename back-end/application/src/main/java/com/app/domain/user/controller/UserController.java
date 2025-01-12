@@ -28,26 +28,19 @@ public class UserController extends Controller {
     @PostMapping("/auth/login/wechat")
     @Operation(summary = "微信小程序登录")
     public RespEntity<UserEntity> wechatLogin(@RequestBody @JsonView({Entity.LOGIN.class}) UserEntity param) {
-        return RespEntity.success(userLoginService.login(param,true));
+        return RespEntity.success(userLoginService.loginWithWechat(param));
     }
 
     @PostMapping("/auth/register/wechat")
     @Operation(summary = "微信小程序注册")
-    public RespEntity<?> wechatRegister(@RequestBody @JsonView({Entity.INSERT.class}) UserEntity param) {
-        return RespEntity.success(userLoginService.register(param,true));
+    public RespEntity<?> wechatRegister(@RequestBody @JsonView({Entity.INSERT.class}) @Validated(Entity.INSERT.class) UserEntity param) {
+        return RespEntity.success(userLoginService.registerWithWechat(param));
     }
-
-    @PostMapping("/auth/register")
-    @Operation(summary = "后台注册")
-    public RespEntity<Boolean> register(@RequestBody @JsonView({Entity.INSERT.class}) @Validated(Entity.INSERT.class) UserEntity param) {
-        return RespEntity.success(userLoginService.register(param,false));
-    }
-
 
     @PostMapping("/auth/login")
     @Operation(summary = "后台登录")
-    public RespEntity<UserEntity> login(@RequestBody @JsonView({Entity.LOGIN.class}) @Validated(Entity.LOGIN.class) UserEntity param) {
-        return RespEntity.success(userLoginService.login(param,false));
+    public RespEntity<UserEntity> login(@RequestBody @JsonView({Entity.ADMIN_LOGIN.class}) @Validated(Entity.ADMIN_LOGIN.class) UserEntity param) {
+        return RespEntity.success(userLoginService.login(param));
     }
 
     @PostMapping("/modifyUserInfo")
