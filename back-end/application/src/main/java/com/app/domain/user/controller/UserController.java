@@ -4,7 +4,6 @@ import com.app.controller.Controller;
 import com.app.domain.base.Entity;
 import com.app.domain.user.entity.LoginUser;
 import com.app.domain.user.entity.UserEntity;
-import com.app.domain.user.param.WeChatLoginParam;
 import com.app.toolkit.web.CommonPageRequestUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
