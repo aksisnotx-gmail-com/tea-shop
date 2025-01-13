@@ -9,7 +9,7 @@
 	},
 	"pages": [
 		{ "path": "pages/home/index" },
-		{ 
+		{
 			"path": "pages/tabbar/watch",
 			"style": {
 				"navigationBarTitleText": "发现",
@@ -18,17 +18,11 @@
 			}
 		},
 		{
-			"path": "pages/tabbar/add",
-			"style": {
-				"navigationBarTitleText": "发图文"
-			}
-		},
-		{
 			"path": "pages/tabbar/car",
 			"style": {
 				"navigationBarTitleText": "购物车",
 				"onReachBottomDistance": 50,
-				"enablePullDownRefresh": true 
+				"enablePullDownRefresh": true
 			}
 		},
 		{ "path": "pages/tabbar/my" }
@@ -37,7 +31,19 @@
 		{
 			"root": "pagesA",
 			"pages": [
-				{ 
+				{
+					"path": "pages/auth/login",
+					"style": {
+						"navigationBarTitleText": "登录"
+					}
+				},
+				{
+					"path": "pages/auth/register",
+					"style": {
+						"navigationBarTitleText": "注册"
+					}
+				},
+				{
 					"path": "pages/goodsItem/index",
 					"style": {
 						"navigationBarTitleText": "商品详情"
@@ -171,18 +177,12 @@
 				"iconPath": "static/tabbar/home.png",
 				"selectedIconPath": "static/tabbar/ahome.png",
 				"text": "首页"
-			}, 
+			},
 			{
 				"pagePath": "pages/tabbar/watch",
 				"iconPath": "static/tabbar/watch.png",
 				"selectedIconPath": "static/tabbar/awatch.png",
 				"text": "发现"
-			},
-			{
-				"pagePath": "pages/tabbar/add",
-				"iconPath": "static/tabbar/add.png",
-				"selectedIconPath": "static/tabbar/add.png",
-				"text": ""
 			},
 			{
 				"pagePath": "pages/tabbar/car",
@@ -200,11 +200,11 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "绾青丝汉服社",
-		"navigationBarBackgroundColor": "#7494D1",
+		"navigationBarTitleText": "不夜候茶文化",
+		"navigationBarBackgroundColor": "#1E4F23",
 		"backgroundColor": "#F8F8F8",
-		"usingComponents": {  
-			"comment-item": "/components/comment-item"  
+		"usingComponents": {
+			"comment-item": "/components/comment-item"
 		}
 	}
 }

@@ -23,12 +23,12 @@ function service(options = {}) {
 				});
 
 				// 登陆失效
-				if (res.data.code === 403) {
+				if (res.data.code === 403 || res.data.message === 'TOKEN不存在') {
 					// 清除本地token等信息
 					uni.clearStorageSync()
 					// 关闭所有页面返回到登录页
 					uni.reLaunch({
-						url: '/pages/tabbar/my'
+						url: '/pagesA/pages/auth/login'
 					})
 				}
 
