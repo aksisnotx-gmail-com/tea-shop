@@ -7,7 +7,6 @@ import aks.com.web.domain.common.service.AbstractService;
 import aks.com.web.domain.file.entity.FileEntity;
 import aks.com.web.domain.file.mapper.FileMapper;
 import cn.hutool.core.util.StrUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +26,6 @@ public class FileService extends AbstractService<FileMapper,FileEntity> {
 
     @Value("${file.save-path}")
     private String filePath;
-
-    private final HttpServletRequest request;
 
     private final HttpServletResponse response;
 
@@ -52,6 +49,6 @@ public class FileService extends AbstractService<FileMapper,FileEntity> {
         FileEntity fileEntity = new FileEntity();
         fileEntity.setPath(fileSavePath);
         this.save(fileEntity);
-        return FileUtils.getUrl(request,REQUEST_URL + fileEntity.getId());
+        return REQUEST_URL + fileEntity.getId();
     }
 }
