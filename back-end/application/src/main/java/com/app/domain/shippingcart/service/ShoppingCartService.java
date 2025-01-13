@@ -1,19 +1,10 @@
 package com.app.domain.shippingcart.service;
 
 import com.app.domain.base.AbstractService;
-import com.app.domain.product.service.ProductDetailsService;
-import com.app.domain.product.service.ProductSkuService;
 import com.app.domain.shippingcart.entity.ShoppingCartEntity;
 import com.app.domain.shippingcart.mapper.ShoppingCartMapper;
-import com.app.toolkit.web.CommonPageRequestUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sdk.exception.GlobalException;
-import com.sdk.util.asserts.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * @author xxl
@@ -23,7 +14,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ShoppingCartService extends AbstractService<ShoppingCartMapper, ShoppingCartEntity> {
 
-    private final ProductDetailsService productService;
+    /*private final ProductDetailsService productService;
 
     private final ProductSkuService skuService;
 
@@ -74,5 +65,5 @@ public class ShoppingCartService extends AbstractService<ShoppingCartMapper, Sho
         page.setTotal(list.size());
         page.setRecords(list);
         return page;
-    }
+    }*/
 }

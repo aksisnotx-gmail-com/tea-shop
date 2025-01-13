@@ -2,14 +2,11 @@ package com.app.domain.product.controller;
 
 import com.app.controller.Controller;
 import com.app.domain.base.Entity;
-import com.app.domain.product.entity.ProductDetailsEntity;
-import com.app.domain.product.entity.ProductSkuEntity;
 import com.app.domain.product.entity.ProductTypeEntity;
 import com.app.domain.product.param.ProductDetailModifyParam;
 import com.app.domain.product.param.ProductDetailParam;
-import com.app.domain.product.param.ProductSizeModifyParam;
-import com.app.domain.product.param.vo.ProductVO;
-import com.app.domain.product.param.vo.RecommendProductVO;
+//import com.app.domain.product.param.vo.ProductVO;
+//import com.app.domain.product.param.vo.RecommendProductVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.sdk.resp.RespEntity;
