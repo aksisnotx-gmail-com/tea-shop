@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -31,21 +32,23 @@ public class ProductDetailsEntity extends Entity {
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> carousel;
 
-    //发货地址
-    @Schema(description = "发货地址")
-    private String deliveryAddress;
-
     //商品名称
     @Schema(description = "商品名称")
     private String productName;
 
-    //商品描述都是图片都是为json List<String>
-    @Schema(description = "商品描述")
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<String> descUrls;
+    //商品价格
+    @Schema(description = "商品价格")
+    private BigDecimal price;
+
+    @Schema(description = "库存")
+    private int stock;
+
+    //是否为推荐商品
+    @Schema(description = "是否推荐，1 是 0 不是")
+    private int isRecommend;
 
     //商品类型：汉服、首饰  List<ProductType>
-    @Schema(description = "商品类型ID")
+    @Schema(description = "商品类型ID，一个商品可以在多个分类")
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> productTypeIds;
 }

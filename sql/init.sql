@@ -35,12 +35,11 @@ create table sys_order
     order_number     varchar(255) null comment '下单编号',
     user_id          varchar(255) null,
     delivery_address varchar(255) null comment '配送地址',
-    product_sku      text         null comment 'json形式sku信息',
-    product_detail   text         null comment '商品信息',
+    products   text         null comment '本次订单所有的商品信息',
     is_evaluate      int          null comment '是否评价了 1 已评价 -1 未处理商品 0 未评价 ',
-    sku_number       int          null comment 'sku数量',
+    number       int          null comment 'sku数量',
     total_price      decimal      null comment '总价格',
-    size             varchar(255) null comment '尺码'
+    remark           varchar(500) null comment '备注'
 )
     comment '订单列表有外键';
 
@@ -61,15 +60,13 @@ create table sys_product_comment
 create table sys_product_details(
     id               varchar(255) not null comment 'id' primary key,
     carousel         varchar(255) null comment '轮播图来自于sku',
-    delivery_address varchar(255) null comment '发货地址',
     product_name     varchar(255) null,
-    desc_urls        text         null comment '商品描述,图片都是为json',
     price           decimal      null comment '价格',
     stock           int          null comment '库存',
     is_recommend    int          null comment '是否推荐，1 是 0 不是',
     create_time      timestamp    null comment '创建时间',
     update_time      timestamp    null,
-    product_type_ids varchar(255) null comment '商品类型ID'
+    product_type_ids text null comment '商品类型ID'
 )
     comment '商品详情有外键';
 
@@ -85,14 +82,12 @@ create table sys_product_type
 
 create table sys_shopping_cart
 (
-    id             varchar(255) not null
-        primary key,
+    id             varchar(255) not null primary key,
     create_time    timestamp    null,
     update_time    timestamp    null,
-    product_sku_id varchar(255) null comment '商品id',
+    product_id varchar(255) null comment '商品id',
     number         int          null comment '数量',
-    user_id        varchar(255) null comment '用户ID',
-    size           varchar(255) null comment '尺寸大小'
+    user_id        varchar(255) null comment '用户ID'
 )
     comment '购物车';
 
