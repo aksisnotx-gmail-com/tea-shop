@@ -139,7 +139,7 @@ create table sys_wallet_record
 
 
 # 初始分类
-insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
+insert into sys_product_type(type, id, create_time) values ('花茶','1',NOW()),
                                                            ('红茶','2',NOW()),
                                                            ('白茶','3',NOW()),
                                                            ('生茶','4',NOW()),
