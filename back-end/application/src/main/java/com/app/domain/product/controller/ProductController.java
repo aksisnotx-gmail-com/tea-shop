@@ -43,7 +43,7 @@ public class ProductController extends Controller {
     //获取所有商品类型
     @GetMapping("/type")
     @Operation(summary = "获取商品类型有ID查询具体,没有ID查询所有的 - [小程序]")
-    public RespEntity<List<ProductTypeEntity>> getAllType(@RequestParam(required = false) String typeId) {
+    public RespEntity<Page<ProductTypeEntity>> getAllType(@RequestParam(required = false) String typeId) {
         return RespEntity.success(typeService.getAllType(typeId));
     }
 
