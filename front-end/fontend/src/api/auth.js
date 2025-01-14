@@ -9,6 +9,14 @@ export function loginApi (data) {
     })
 }
 
+export function registerApi (data) {
+    return service({
+        url: 'user/auth/register/wechat',
+        method: 'post',
+        data
+    })
+}
+
 // 获取个人信息
 export function getUserApi () {
     return service({

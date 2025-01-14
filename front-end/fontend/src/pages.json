@@ -9,18 +9,12 @@
 	},
 	"pages": [
 		{ "path": "pages/home/index" },
-		{ 
-			"path": "pages/tabbar/watch",
+		{
+			"path": "pages/tabbar/sort",
 			"style": {
-				"navigationBarTitleText": "发现",
+				"navigationBarTitleText": "分类",
 				"enablePullDownRefresh": true,
 				"onReachBottomDistance": 50
-			}
-		},
-		{
-			"path": "pages/tabbar/add",
-			"style": {
-				"navigationBarTitleText": "发图文"
 			}
 		},
 		{
@@ -28,7 +22,7 @@
 			"style": {
 				"navigationBarTitleText": "购物车",
 				"onReachBottomDistance": 50,
-				"enablePullDownRefresh": true 
+				"enablePullDownRefresh": true
 			}
 		},
 		{ "path": "pages/tabbar/my" }
@@ -37,7 +31,31 @@
 		{
 			"root": "pagesA",
 			"pages": [
-				{ 
+				{
+					"path": "pages/auth/login",
+					"style": {
+						"navigationBarTitleText": "登录"
+					}
+				},
+				{
+					"path": "pages/auth/register",
+					"style": {
+						"navigationBarTitleText": "注册"
+					}
+				},
+				{
+					"path": "pages/search/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "pages/teaCulture/index",
+					"style": {
+						"navigationBarTitleText": "茶文化"
+					}
+				},
+				{
 					"path": "pages/goodsItem/index",
 					"style": {
 						"navigationBarTitleText": "商品详情"
@@ -135,7 +153,7 @@
 				{
 					"path": "pages/my/moneny",
 					"style": {
-						"navigationBarTitleText": "汉币中心"
+						"navigationBarTitleText": "余额充值"
 					}
 				},
 				{
@@ -162,7 +180,7 @@
 	],
 	"tabBar": {
 		"color": "#bfbfbf",
-		"selectedColor": "#d81e06",
+		"selectedColor": "#1E4F23",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [
@@ -171,18 +189,12 @@
 				"iconPath": "static/tabbar/home.png",
 				"selectedIconPath": "static/tabbar/ahome.png",
 				"text": "首页"
-			}, 
-			{
-				"pagePath": "pages/tabbar/watch",
-				"iconPath": "static/tabbar/watch.png",
-				"selectedIconPath": "static/tabbar/awatch.png",
-				"text": "发现"
 			},
 			{
-				"pagePath": "pages/tabbar/add",
-				"iconPath": "static/tabbar/add.png",
-				"selectedIconPath": "static/tabbar/add.png",
-				"text": ""
+				"pagePath": "pages/tabbar/sort",
+				"iconPath": "static/tabbar/sort.png",
+				"selectedIconPath": "static/tabbar/asort.png",
+				"text": "分类"
 			},
 			{
 				"pagePath": "pages/tabbar/car",
@@ -200,11 +212,11 @@
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "绾青丝汉服社",
-		"navigationBarBackgroundColor": "#7494D1",
+		"navigationBarTitleText": "不夜候茶文化",
+		"navigationBarBackgroundColor": "#1E4F23",
 		"backgroundColor": "#F8F8F8",
-		"usingComponents": {  
-			"comment-item": "/components/comment-item"  
+		"usingComponents": {
+			"comment-item": "/components/comment-item"
 		}
 	}
 }
