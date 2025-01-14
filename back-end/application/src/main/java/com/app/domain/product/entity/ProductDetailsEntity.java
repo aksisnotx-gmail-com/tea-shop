@@ -26,9 +26,6 @@ import java.util.List;
 @TableName(value = "sys_product_details",autoResultMap = true)
 public class ProductDetailsEntity extends Entity {
 
-    public static final int IS_POPULAR = 1;
-    public static final int NOT_POPULAR = 0;
-
     public static final int IS_SPECIAL = 1;
     public static final int NOT_SPECIAL = 0;
 
@@ -63,18 +60,15 @@ public class ProductDetailsEntity extends Entity {
     @Min(value = 0, message = "库存数量错误", groups = {INSERT.class,UPDATE.class})
     private int stock;
 
-    //是否为是否热销
-    @Schema(description = "是否热销，1 是 0 不是")
-    @JsonView({INSERT.class,UPDATE.class})
-    @Min(value = 0, message = "异常参数", groups = {INSERT.class,UPDATE.class})
-    @Max(value = 1, message = "异常参数", groups = {INSERT.class,UPDATE.class})
-    private int isPopular;
-
     @Schema(description = "是否为特惠，1 是 0 不是")
     @JsonView({INSERT.class,UPDATE.class})
     @Min(value = 0, message = "异常参数", groups = {INSERT.class,UPDATE.class})
     @Max(value = 1, message = "异常参数", groups = {INSERT.class,UPDATE.class})
     private int isSpecial;
+
+    @Schema(description = "销量")
+    @JsonView({IGNORE.class})
+    private int salesQuantity;
 
     @Schema(description = "商品类型ID，一个商品可以在多个分类")
     @TableField(typeHandler = JacksonTypeHandler.class)

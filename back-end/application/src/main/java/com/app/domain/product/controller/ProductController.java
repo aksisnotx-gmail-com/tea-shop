@@ -132,7 +132,9 @@ public class ProductController extends Controller {
     @Operation(summary = "热销商品 - [小程序 & 后台]")
     public RespEntity<Page<ProductDetailsEntity>> getPopularProducts() {
         return RespEntity.success(productDetailsService.
-                lambdaQuery().eq(ProductDetailsEntity::getIsPopular, ProductDetailsEntity.IS_POPULAR).
+                lambdaQuery().isNotNull(ProductDetailsEntity::getSalesQuantity).
+                //销量不为0
+                gt(ProductDetailsEntity::getSalesQuantity, 0).
                 page(CommonPageRequestUtils.defaultPage()));
     }
 }

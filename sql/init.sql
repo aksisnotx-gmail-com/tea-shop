@@ -64,8 +64,8 @@ create table sys_product_details(
     price           decimal      null comment '价格',
     special_price     decimal          null comment '特惠价格',
     stock           int          null comment '库存',
-    is_popular    int          null comment '是否热销，1 是 0 不是',
     is_special    int          null comment '是否特惠，1 是 0 不是',
+    sales_quantity    int          null comment '销售数量',
     create_time      timestamp    null comment '创建时间',
     update_time      timestamp    null,
     product_type_ids text null comment '商品类型ID'
@@ -154,8 +154,9 @@ values ('1','15156246001','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','ad
 insert into sys_wallet (id, balance, user_id, create_time, update_time) values ('1', 0, '2', NOW(), NOW());
 
 # 初始化化商品
-insert into sys_product_details(carousel,id, product_name, price, special_price, stock, is_popular, is_special, create_time, product_type_ids)
-values ('[]','1', '红茶', 250.00, 25, 100, 1, 1, NOW(), '["1","2"]'),
-('[]','2', '绿茶',  100.00, 0, 10, 0, 0, NOW(), '["1","2","3"]'),
-('[]','3', '西湖龙井',   10000.00, 9999.99, 1, 1, 1, NOW(), '["5"]');
+insert into sys_product_details(sales_quantity,carousel,id, product_name, price, special_price, stock, is_special, create_time, product_type_ids)
+values (1000,'[]','1', '红茶', 250.00, 25, 100, 1, NOW(), '["1","2"]'),
+(2000,'[]','2', '绿茶',  100.00, 0, 10, 0, NOW(), '["1","2","3"]'),
+(3000,'[]','3', '西湖龙井',   10000.00, 9999.99, 1, 1, NOW(), '["5"]'),
+(0,'[]','4', '峨眉山白茶',   499.10, 0, 23, 0, NOW(), '["5"]');
 
