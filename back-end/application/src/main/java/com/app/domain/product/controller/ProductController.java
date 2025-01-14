@@ -35,8 +35,8 @@ public class ProductController extends Controller {
     //增加商品类型
     @PostMapping("/type/add")
     @Operation(summary = "增加商品类型 - [后台]")
-    public RespEntity<Boolean> addType(@RequestBody @Validated(Entity.INSERT.class) @JsonView(Entity.INSERT.class) ProductTypeEntity param) {
-        return RespEntity.success(typeService.addType(param));
+    public RespEntity<Boolean> addType(@RequestBody @Validated(Entity.INSERT.class) @JsonView(Entity.INSERT.class) ProductTypeEntity params) {
+        return RespEntity.success(typeService.save(params));
     }
 
 
@@ -59,7 +59,7 @@ public class ProductController extends Controller {
     @PostMapping("/type/modify")
     @Operation(summary = "修改商品类型 - [后台]")
     public RespEntity<Boolean> modifyType(@RequestBody @Validated(Entity.UPDATE.class) @JsonView(Entity.UPDATE.class) ProductTypeEntity param) {
-        return RespEntity.success(typeService.modifyType(param));
+        return RespEntity.success(typeService.updateById(param));
     }
 
     /*
@@ -84,10 +84,10 @@ public class ProductController extends Controller {
     }
 
     //删除商品
-    @GetMapping("/detail/delete/{id}")
+    @PostMapping("/detail/delete")
     @Operation(summary = "删除商品 - [后台]")
-    public RespEntity<Boolean> delete(@PathVariable String id) {
-        return RespEntity.success(productDetailsService.deleteProductById(List.of(id)));
+    public RespEntity<Boolean> delete(@RequestBody List<String> ids) {
+        return RespEntity.success(productDetailsService.removeBatchByIds(ids));
     }
 
     //获取商品详情
@@ -107,7 +107,7 @@ public class ProductController extends Controller {
     //修改商品信息
     @PostMapping("/detail/modify")
     @Operation(summary = "修改商品 - [后台]")
-    public RespEntity<Boolean> modifyDetail(@RequestBody @Validated ProductDetailsEntity param) {
+    public RespEntity<Boolean> modifyDetail(@RequestBody @Validated(Entity.UPDATE.class) @JsonView(Entity.UPDATE.class) ProductDetailsEntity param) {
         return RespEntity.success(productDetailsService.updateById(param));
     }
 

@@ -47,4 +47,5 @@ public class Controller {
 
     @Resource
     protected ProductTypeService typeService;
+
 }

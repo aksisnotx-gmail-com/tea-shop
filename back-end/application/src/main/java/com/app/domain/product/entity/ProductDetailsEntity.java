@@ -6,13 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.Length;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -59,6 +55,7 @@ public class ProductDetailsEntity extends Entity {
 
     @Schema(description = "商品特惠价格")
     @JsonView({INSERT.class,UPDATE.class})
+    @Min(value = 0, message = "商品特惠价格错误", groups = {INSERT.class,UPDATE.class})
     private BigDecimal specialPrice;
 
     @Schema(description = "库存")
@@ -79,11 +76,10 @@ public class ProductDetailsEntity extends Entity {
     @Max(value = 1, message = "异常参数", groups = {INSERT.class,UPDATE.class})
     private int isSpecial;
 
-    //商品类型：汉服、首饰  List<ProductType>
     @Schema(description = "商品类型ID，一个商品可以在多个分类")
     @TableField(typeHandler = JacksonTypeHandler.class)
     @JsonView({INSERT.class,UPDATE.class})
-    @Length(min = 1, message = "商品类型不能为空", groups = {INSERT.class,UPDATE.class})
+    @Size(min = 1, message = "商品类型不能为空", groups = {INSERT.class,UPDATE.class})
     private List<String> productTypeIds;
 }
 

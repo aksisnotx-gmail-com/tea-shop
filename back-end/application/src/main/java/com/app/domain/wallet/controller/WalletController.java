@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  * @since 2024/3/26
  */
 
-@Tag(name = "我的 - 汉币中心")
+@Tag(name = "我的 - 钱包")
 @RequestMapping("/user/wallet")
 @RestController
 @Validated

@@ -1,16 +1,17 @@
 package com.app.domain.shippingcart.entity;
 
 import com.app.domain.base.Entity;
+import com.app.domain.product.entity.ProductDetailsEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
-import java.util.Map;
 
 /**
  * 购物车(SysShoppingCart)表实体类
@@ -36,6 +37,7 @@ public class ShoppingCartEntity extends Entity {
     //数量
     @Schema(description = "数量")
     @JsonView({INSERT.class})
+    @Min(value = 1, message = "数量不能小于1", groups = {INSERT.class})
     private Integer number;
 
     //用户ID
@@ -45,6 +47,6 @@ public class ShoppingCartEntity extends Entity {
 
     @JsonView({IGNORE.class})
     @TableField(exist = false)
-    private Map<String,Object> productMap;
+    private ProductDetailsEntity product;
 }
 

@@ -1,8 +1,15 @@
 package com.app.domain.shippingcart.service;
 
 import com.app.domain.base.AbstractService;
+import com.app.domain.product.service.ProductDetailsService;
 import com.app.domain.shippingcart.entity.ShoppingCartEntity;
 import com.app.domain.shippingcart.mapper.ShoppingCartMapper;
+import com.app.domain.user.entity.UserEntity;
+import com.app.domain.user.enums.Role;
+import com.app.toolkit.web.CommonPageRequestUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.sdk.exception.GlobalException;
+import com.sdk.util.asserts.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,24 +21,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ShoppingCartService extends AbstractService<ShoppingCartMapper, ShoppingCartEntity> {
 
-    /*private final ProductDetailsService productService;
+    private final ProductDetailsService productService;
 
-    private final ProductSkuService skuService;
-
-    public synchronized Boolean addSku(ShoppingCartEntity entity, String loginUserId) {
-        //购物数量
-        Integer number = entity.getNumber();
-        AssertUtils.assertTrue(number > 0, "购买数量不能小于等于0");
+    public synchronized Boolean addProduct(ShoppingCartEntity entity, UserEntity user) {
+        AssertUtils.assertTrue(Role.BUYER.equals(user.getRole()), "操作异常");
         //库存数量
-        Integer stock = skuService.getById(entity.getProductSkuId()).getStock();
-        if (number > stock) {
+        Integer stock = productService.getById(entity.getProductId()).getStock();
+        if (entity.getNumber() > stock) {
             throw new GlobalException("库存不足");
         }
-
-        //假设同款的SKU多次添加
-        List<ShoppingCartEntity> list = this.lambdaQuery().eq(ShoppingCartEntity::getUserId, loginUserId).eq(ShoppingCartEntity::getProductSkuId, entity.getProductSkuId()).list();
-        AssertUtils.assertTrue(list.isEmpty(), "同款的SKU已存在 , 接口调用错误");
-        entity.setUserId(loginUserId);
+        entity.setUserId(user.getId());
         return this.save(entity);
     }
 
@@ -45,7 +44,7 @@ public class ShoppingCartService extends AbstractService<ShoppingCartMapper, Sho
         }
 
         //库存
-        Integer stock = skuService.getById(entity.getProductSkuId()).getStock();
+        int stock = productService.getById(entity.getProductId()).getStock();
         if (sumNumber > stock) {
             throw new GlobalException("库存不足");
         }
@@ -57,13 +56,9 @@ public class ShoppingCartService extends AbstractService<ShoppingCartMapper, Sho
 
     public Page<ShoppingCartEntity> getAll(String loginUserId) {
         Page<ShoppingCartEntity> page = this.lambdaQuery().eq(ShoppingCartEntity::getUserId, loginUserId).page(CommonPageRequestUtils.defaultPage());
-        //查询productMap
-        List<ShoppingCartEntity> list = page.getRecords().stream().
-                peek(t -> t.setProductMap(productService.getProductBySkuId(t.getProductSkuId())))
-                //把productMap为空的筛选出去
-                .filter(t -> !Objects.isNull(t.getProductMap())).toList();
-        page.setTotal(list.size());
-        page.setRecords(list);
+        page.getRecords().forEach(t -> {
+            t.setProduct(productService.getById(t.getProductId()));
+        });
         return page;
-    }*/
+    }
 }

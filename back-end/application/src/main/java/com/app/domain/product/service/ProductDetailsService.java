@@ -7,7 +7,6 @@ import com.app.domain.product.mapper.ProductDetailsMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,11 +20,6 @@ import java.util.List;
 public class ProductDetailsService extends AbstractService<ProductDetailsMapper,ProductDetailsEntity> {
 
     private final ProductTypeService typeService;
-
-    @Transactional(rollbackFor = RuntimeException.class)
-    public Boolean deleteProductById(List<String> ids) {
-        return this.removeBatchByIds(ids);
-    }
 
     public Boolean deleteType(String typeId) {
         ProductTypeEntity entity = typeService.getById(typeId);

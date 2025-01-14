@@ -139,7 +139,7 @@ create table sys_wallet_record
 
 
 # 初始分类
-insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
+insert into sys_product_type(type, id, create_time) values ('花茶','1',NOW()),
                                                            ('红茶','2',NOW()),
                                                            ('白茶','3',NOW()),
                                                            ('生茶','4',NOW()),
@@ -152,3 +152,10 @@ values ('1','15156246001','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','ad
 
 # 初始化钱包
 insert into sys_wallet (id, balance, user_id, create_time, update_time) values ('1', 0, '2', NOW(), NOW());
+
+# 初始化化商品
+insert into sys_product_details(carousel,id, product_name, price, special_price, stock, is_popular, is_special, create_time, product_type_ids)
+values ('[]','1', '红茶', 250.00, 25, 100, 1, 1, NOW(), '["1","2"]'),
+('[]','2', '绿茶',  100.00, 0, 10, 0, 0, NOW(), '["1","2","3"]'),
+('[]','3', '西湖龙井',   10000.00, 9999.99, 1, 1, 1, NOW(), '["5"]');
+
