@@ -9,7 +9,6 @@ export const useUserStore = defineStore('user', {
         setUserInfo (userInfo) {
             setLocalUserInfo(userInfo)
             this.userInfo = { ...userInfo }
-            console.log(this.userInfo, 'userInfo');
         },
         getUserInfo() {
             this.userInfo = this.userInfo?.id ? this.userInfo : getLocalUserInfo()

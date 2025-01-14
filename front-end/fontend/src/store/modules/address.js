@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { updateApi, getUserApi } from '@/api/auth'
+import {getLocalUserInfo} from "@/utils/auth";
 
 export const useAddressStore = defineStore("address", {
     state: () => ({
@@ -22,16 +23,14 @@ export const useAddressStore = defineStore("address", {
             }
         },
         async updateAddress (paramsjSON) {
-            const id = uni.getStorageSync('id')
-            const nickname = uni.getStorageSync('nickname')
-            const avatar = uni.getStorageSync('avatar')
-            const coordinate = uni.getStorageSync('coordinate')
+            const userInfo = getLocalUserInfo()
+            const { id, nickname, avatar, username } = userInfo
 
             const params = {
                 id,
                 nickname,
                 avatar,
-                coordinate,
+                username,
                 shippingAddress: paramsjSON
             }
 

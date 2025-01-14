@@ -6,6 +6,7 @@
     } from '@/api/home'
     import { useGoodsStore } from '@/store/modules/goods'
     import { useTypeStore } from '@/store/modules/type'
+    import {onPullDownRefresh} from "@dcloudio/uni-app";
 
     const onJumpToSearch = () => {
         uni.navigateTo({
@@ -86,13 +87,17 @@
     }
 
     const typeStore = useTypeStore()
-    // onMounted(async () => {
-    //     await getSwiperList()
-    //     await typeStore.getProductTypeList()
-    //     await getRecommendProducts()
-    //     await getSpecialProducts()
-    //     uni.hideLoading()
-    // })
+
+   async function apiInit () {
+      await getSwiperList()
+     // await typeStore.getProductTypeList()
+     // await getRecommendProducts()
+     // await getSpecialProducts()
+     // uni.hideLoading()
+    }
+    onMounted( () => {
+      apiInit()
+    })
 
     // onLoad(() => {
     //     uni.showLoading({
@@ -100,6 +105,12 @@
     //     });
     // })
 
+    onPullDownRefresh(() => {
+      apiInit()
+      setTimeout(() => {
+        uni.stopPullDownRefresh()
+      }, 1000)
+    })
 
 </script>
 
@@ -143,7 +154,7 @@
 
         <view class="px-4 mt-3 pb-4">
           <view class="bg-#fff p-2 rounded-2">
-            <view class="hot-sales-header">
+            <view class="py-3">
               <text class="text-5 font-600">热销茶叶</text>
               <!--            <view class="more-btn" @click="JumpAllProduct">-->
               <!--              <text class="text-3.25 color-#666">更多</text>-->
