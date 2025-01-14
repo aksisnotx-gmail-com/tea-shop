@@ -1,36 +1,17 @@
 package com.app.domain.user.service;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.codec.Base64;
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.crypto.Mode;
-import cn.hutool.crypto.Padding;
-import cn.hutool.crypto.symmetric.AES;
-import cn.hutool.http.HttpException;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.app.domain.base.AbstractService;
 import com.app.domain.user.entity.LoginUser;
 import com.app.domain.user.enums.Role;
 import com.app.domain.user.mapper.UserMapper;
-import com.app.domain.user.param.WeChatLoginParam;
 import com.app.domain.user.entity.UserEntity;
 import com.app.domain.wallet.service.WalletService;
-import com.app.toolkit.redis.RedisUtils;
 import com.sdk.exception.GlobalException;
-import com.sdk.resp.RespEntity;
 import com.sdk.util.asserts.AssertUtils;
-import com.sdk.util.jwt.JWTUtils;
 import com.sdk.util.md5.MD5Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
 
 /**
  * 微信服务

@@ -1,3 +1,5 @@
+drop database if exists tea_shop_database;
+
 create database if not exists tea_shop_database;
 
 use tea_shop_database;
@@ -11,40 +13,6 @@ create table sys_banner
         primary key
 )
     comment '轮播图';
-
-create table sys_discovery
-(
-    id           varchar(255) not null comment 'id'
-        primary key,
-    user_id      varchar(255) null comment '用户id',
-    desc_text    text         null comment '文本描述',
-    create_time  timestamp    null comment '创建时间',
-    update_time  timestamp    null comment '更新时间',
-    img          text         null comment '图片路径JSON形式',
-    likes        int          null comment '点赞数量',
-    like_users   text         null comment '点赞用户JSON',
-    unread_likes text         null comment 'json形式的对象记录未读的赞',
-    is_pass      int          null comment '审核是否通过 1 通过 0 未通过'
-)
-    comment '商品朋友圈有外键';
-
-create table sys_discovery_comment
-(
-    id           varchar(255) not null
-        primary key,
-    create_time  timestamp    null,
-    update_time  timestamp    null,
-    comment_id   varchar(255) null comment '商品朋友圈ID/评论ID',
-    content      text         null comment '评论内容',
-    user_id      varchar(255) null comment '评论人',
-    is_read      int          null comment '是否已读(1 已读 0 未读)',
-    comment_type varchar(255) null comment '评论类型',
-    discovery_id varchar(255) null comment '发现ID'
-)
-    comment '评论内容';
-
-create index sys_discovery_comments_fk
-    on sys_discovery_comment (comment_id);
 
 create table if not exists sys_file
 (
@@ -67,12 +35,11 @@ create table sys_order
     order_number     varchar(255) null comment '下单编号',
     user_id          varchar(255) null,
     delivery_address varchar(255) null comment '配送地址',
-    product_sku      text         null comment 'json形式sku信息',
-    product_detail   text         null comment '商品信息',
+    products   text         null comment '本次订单所有的商品信息',
     is_evaluate      int          null comment '是否评价了 1 已评价 -1 未处理商品 0 未评价 ',
-    sku_number       int          null comment 'sku数量',
+    number       int          null comment 'sku数量',
     total_price      decimal      null comment '总价格',
-    size             varchar(255) null comment '尺码'
+    remark           varchar(500) null comment '备注'
 )
     comment '订单列表有外键';
 
@@ -90,39 +57,20 @@ create table sys_product_comment
 )
     comment '商品评论';
 
-create table sys_product_details
-(
-    id               varchar(255) not null comment 'id'
-        primary key,
+create table sys_product_details(
+    id               varchar(255) not null comment 'id' primary key,
     carousel         varchar(255) null comment '轮播图来自于sku',
-    delivery_address varchar(255) null comment '发货地址',
     product_name     varchar(255) null,
-    desc_urls        text         null comment '商品描述,图片都是为json',
+    price           decimal      null comment '价格',
+    special_price     decimal          null comment '特惠价格',
+    stock           int          null comment '库存',
+    is_popular    int          null comment '是否热销，1 是 0 不是',
+    is_special    int          null comment '是否特惠，1 是 0 不是',
     create_time      timestamp    null comment '创建时间',
     update_time      timestamp    null,
-    product_type_ids varchar(255) null comment '商品类型ID'
+    product_type_ids text null comment '商品类型ID'
 )
     comment '商品详情有外键';
-
-create table sys_product_sku
-(
-    id              varchar(255) not null comment 'id'
-        primary key,
-    product_id      varchar(255) not null comment '商品ID',
-    price           decimal      null comment '价格',
-    stock           int          null comment '库存',
-    size            varchar(255) null comment '尺码',
-    color           varchar(255) null comment '颜色',
-    other_attribute text         null comment '其他属性',
-    create_time     timestamp    null comment '创建时间',
-    update_time     timestamp    null comment '更新时间',
-    is_recommend    int          null comment '是否推荐，1 是 0 不是',
-    special_price   decimal      null comment '特惠价格',
-    is_special      int          null comment '是否为特惠 1 是 0 不是',
-    constraint sys_product_sku_sys_product_details_id_fk
-        foreign key (product_id) references sys_product_details (id)
-            on update cascade on delete cascade
-);
 
 create table sys_product_type
 (
@@ -136,21 +84,18 @@ create table sys_product_type
 
 create table sys_shopping_cart
 (
-    id             varchar(255) not null
-        primary key,
+    id             varchar(255) not null primary key,
     create_time    timestamp    null,
     update_time    timestamp    null,
-    product_sku_id varchar(255) null comment '商品id',
+    product_id varchar(255) null comment '商品id',
     number         int          null comment '数量',
-    user_id        varchar(255) null comment '用户ID',
-    size           varchar(255) null comment '尺寸大小'
+    user_id        varchar(255) null comment '用户ID'
 )
     comment '购物车';
 
 create table sys_user
 (
-    id               varchar(255) not null comment 'id'
-        primary key,
+    id               varchar(255) not null comment 'id' primary key,
     role             varchar(255) null comment '角色',
     pwd              varchar(255) null comment '密码',
     nickname         varchar(255) null comment '昵称',
@@ -192,12 +137,15 @@ create table sys_wallet_record
 
 
 
-# 初始值
+# 初始分类
 insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
                                                            ('红茶','2',NOW()),
                                                            ('白茶','3',NOW()),
                                                            ('生茶','4',NOW()),
-                                                           ('熟茶','5',NOW())
+                                                           ('熟茶','5',NOW());
 
+# 初始用户
 insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
 values ('1','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','admin',NOW(),1);
+insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
+values ('2','BUYER','e10adc3949ba59abbe56e057f20f883e','test-buyer','test-buyer',NOW(),1);

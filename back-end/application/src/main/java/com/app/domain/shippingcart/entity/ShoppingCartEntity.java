@@ -31,12 +31,7 @@ public class ShoppingCartEntity extends Entity {
     @Schema(description = "商品id")
     @JsonView({INSERT.class})
     @NotBlank(message = "商品id不能为空", groups = {INSERT.class})
-    private String productSkuId;
-
-    @Schema(description = "size")
-    @JsonView({INSERT.class})
-    @NotBlank(message = "size不能为空", groups = {INSERT.class})
-    private String size;
+    private String productId;
 
     //数量
     @Schema(description = "数量")

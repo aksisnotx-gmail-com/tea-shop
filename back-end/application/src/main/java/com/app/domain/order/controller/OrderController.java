@@ -1,19 +1,10 @@
 package com.app.domain.order.controller;
 
 import com.app.controller.Controller;
-import com.app.domain.comment.entity.ProductCommentEntity;
-import com.app.domain.order.enmus.OrderState;
-import com.app.domain.order.entity.OrderEntity;
-import com.app.domain.order.param.OrderParam;
-import com.app.domain.user.entity.LoginUser;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sdk.resp.RespEntity;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author xxl
@@ -25,7 +16,7 @@ import java.util.List;
 @Validated
 public class OrderController extends Controller {
 
-    //下单
+   /* //下单
     @PostMapping("/create")
     @Operation(summary = "创建订单")
     public RespEntity<List<OrderEntity>> createOrder(@RequestBody List<OrderParam> orderParam) {
@@ -120,5 +111,5 @@ public class OrderController extends Controller {
     @Operation(summary = "获取订单通过类型")
     public RespEntity<Page<OrderEntity>> getOrderByType( @RequestParam OrderState type) {
         return RespEntity.success(orderService.getOrderByType(type,LoginUser.getLoginUser()));
-    }
+    }*/
 }

@@ -4,10 +4,6 @@ import com.app.domain.base.AbstractService;
 import com.app.domain.order.enmus.OrderState;
 import com.app.domain.order.entity.OrderEntity;
 import com.app.domain.order.mapper.OrderMapper;
-import com.app.domain.order.param.OrderParam;
-import com.app.domain.product.entity.ProductSkuEntity;
-import com.app.domain.product.service.ProductDetailsService;
-import com.app.domain.product.service.ProductSkuService;
 import com.app.domain.user.entity.UserEntity;
 import com.app.domain.user.enums.Role;
 import com.app.domain.user.service.UserService;
@@ -18,14 +14,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sdk.util.asserts.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-
-import static com.app.domain.order.enmus.OrderState.MAKE_PAYMENT;
 
 /**
  * @author xxl
@@ -35,9 +25,9 @@ import static com.app.domain.order.enmus.OrderState.MAKE_PAYMENT;
 @RequiredArgsConstructor
 public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
 
-    private final ProductSkuService skuService;
+    //private final ProductSkuService skuService;
 
-    private final ProductDetailsService productDetailsService;
+    //private final ProductDetailsService productDetailsService;
 
     private final OrderAction orderAction;
 
@@ -61,7 +51,7 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
                 eq(OrderEntity::getState, OrderState.CONFIRM_RECEIPT.name()).exists();
     }
 
-    @Transactional(rollbackFor = RuntimeException.class)
+    /*@Transactional(rollbackFor = RuntimeException.class)
     public  List<OrderEntity> createOrder(List<OrderParam> orderParam,String userId) {
         List<OrderEntity> list = orderParam.stream().map(t -> {
             ProductSkuEntity entity = skuService.getById(t.getSkuId());
@@ -133,7 +123,7 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         walletService.recharge(price,userService.getById(one.getUserId()));
         //更新订单 && 钱包 && 更新商品
         return this.updateById(one);
-    }
+    }*/
 
     public Boolean sendOrder(String orderId, UserEntity loginUser) {
         OrderState send = OrderState.SHIP_ORDER;
@@ -196,7 +186,8 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
     }
 
     public List<OrderEntity> getDetailsByProductId(String productId) {
-        return this.lambdaQuery().list().stream().filter(t -> t.getProductDetail().getId().equals(productId)).toList();
+        //return this.lambdaQuery().list().stream().filter(t -> t.getProductDetail().getId().equals(productId)).toList();
+        return null;
     }
 
     private OrderEntity getOne(String orderId,OrderState nextState,UserEntity user) {
