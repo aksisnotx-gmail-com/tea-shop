@@ -1,11 +1,23 @@
 <script setup>
-    import { 
-        getSwiperListApi, 
-        getRecommendProductsApi, 
+    import {
+        getSwiperListApi,
+        getRecommendProductsApi,
         getSpecialProductsApi
     } from '@/api/home'
     import { useGoodsStore } from '@/store/modules/goods'
     import { useTypeStore } from '@/store/modules/type'
+
+    const onJumpToSearch = () => {
+        uni.navigateTo({
+            url: '/pagesA/pages/search/index'
+        })
+    }
+
+    const onJumpToCulture = () => {
+        uni.navigateTo({
+            url: '/pagesA/pages/teaCulture/index'
+        })
+    }
 
     const swiperList = ref([])
     const getSwiperList = async () => {
@@ -16,15 +28,33 @@
         swiperList.value = records.map(item => item.bannerUrl)
     }
 
-    const noticeText = ref('欢迎同胞们来到绾青丝汉服社!')
-
-    const recommendProducts = ref([])
-    const getRecommendProducts = async () => {
-        const res = await getRecommendProductsApi()
-        if(res.data.records.length) {
-            recommendProducts.value = [ ...res.data.records ]
-        }
-    }
+    const teaType = [
+      {
+        id: 1,
+        imageUrl: 'scentedTea',
+        typeName: '花茶'
+      },
+      {
+        id: 2,
+        imageUrl: 'blackTea',
+        typeName: '红茶'
+      },
+      {
+        id: 3,
+        imageUrl: 'whiteTea',
+        typeName: '白茶'
+      },
+      {
+        id: 4,
+        imageUrl: 'rawTea',
+        typeName: '生茶'
+      },
+      {
+        id: 5,
+        imageUrl: 'ripeTea',
+        typeName: '熟茶'
+      },
+    ]
 
     const specialProducts = ref([])
     const getSpecialProducts = async () => {
@@ -56,25 +86,28 @@
     }
 
     const typeStore = useTypeStore()
-    onMounted(async () => {
-        await getSwiperList()
-        await typeStore.getProductTypeList()
-        await getRecommendProducts()
-        await getSpecialProducts()
-        uni.hideLoading()
-    })
+    // onMounted(async () => {
+    //     await getSwiperList()
+    //     await typeStore.getProductTypeList()
+    //     await getRecommendProducts()
+    //     await getSpecialProducts()
+    //     uni.hideLoading()
+    // })
 
-    onLoad(() => {
-        uni.showLoading({
-            title: '加载中'
-        });
-    })
+    // onLoad(() => {
+    //     uni.showLoading({
+    //         title: '加载中'
+    //     });
+    // })
 
 
 </script>
 
 <template>
-    <view class="bg-#C1C1C1">
+    <view class="bg-#1E4F23">
+        <view class="px-3">
+          <up-search disabled placeholder="搜索" :showAction="false" @click="onJumpToSearch"></up-search>
+        </view>
         <view class="px-4 py-3">
             <u-swiper
                 :list="swiperList"
@@ -83,108 +116,107 @@
                 indicatorActiveColor="#E4697B"
                 indicatorMode="dot"
                 :displayMultipleItems="0"
-            ></u-swiper> 
+            ></u-swiper>
         </view>
-        <view>
-            <u-notice-bar 
-                :text="noticeText"
-                bgColor="#DFE7FA"
-                fontSize="16"
-                icon="volume-fill"
-            ></u-notice-bar>
+        <view class="px-4 pb-3">
+          <up-image
+              show-loading
+              src="/pagesA/static/teaArtOrigin.webp"
+              width="100%"
+              height="360rpx"
+              @click="onJumpToCulture"
+          ></up-image>
         </view>
-        <view class="flex justify-center py-6 px-2 bg-#fff">
-            <view class="flex flex-wrap gap-3">
-                <template v-for="item of typeStore.productTypeList" :key="item.id">
-                    <button class="nav" @click="JumpClassify(item.id)">
-                        <image class="w-12 h-12" :src="`/static/nav/${item.icon}.png`" mode="aspectFit" />
-                        <text class="font-600 text-4.5">{{ item.type }}</text>
-                    </button>
-                </template>
-                <button class="nav" @click="JumpAllProduct">
-                    <image class="w-12 h-12" src="@/static/nav/all.png" mode="aspectFit" />
-                    <text class="font-600 text-4.5">全部商品</text>
-                </button>
+        <view class="px-4 py-3 flex justify-between">
+          <template v-for="item of teaType" :key="item.id">
+            <view class="flex flex-col gap-3 items-center">
+              <up-image
+                  :src="`/pagesA/static/${item.imageUrl}.webp`"
+                  width="100rpx"
+                  height="125rpx"
+                  shape="circle"
+              ></up-image>
+              <text class="text-3.25 color-bluegray">{{ item.typeName }}</text>
             </view>
+          </template>
         </view>
-        <view class="bg-#fff px-4">
-            <view class="layout-slide mb-2">
-                <text class="text-5 font-600">限时特惠</text>
-                <text class="color-#ccc">滑动查看</text>
+
+        <view class="px-4 mt-3 pb-4">
+          <view class="bg-#fff p-2 rounded-2">
+            <view class="hot-sales-header">
+              <text class="text-5 font-600">热销茶叶</text>
+              <!--            <view class="more-btn" @click="JumpAllProduct">-->
+              <!--              <text class="text-3.25 color-#666">更多</text>-->
+              <!--              <up-icon name="arrow-right" size="24" color="#666"></up-icon>-->
+              <!--            </view>-->
             </view>
-              
-            <u-scroll-list
-                :indicator="false"
-            >
-                <template v-if="!specialProducts.length">
-                    <u-empty
-                        text="暂无商品数据"
-                        mode="data"
-                    >
-                    </u-empty>
-                </template>
-                <template v-else>
-                    <view 
-                        v-for="item of specialProducts" 
-                        :key="item.id" 
-                        class="goods_item bg-hotpink"
-                        @click="toDetail(item.productId)"
-                    >
-                        <view class="p-3 max-w-40 flex flex-col">
-                            <image  
-                                v-if="item.attribute.carouselUrl"
-                                :src="item.attribute.carouselUrl" 
-                                mode="aspectFit" 
-                                class="w-30 h-30"
-                            />
-                            <text class="color-#999">
-                                {{ item.attribute.desc }}
-                            </text>
-                            <view class="flex justify-between">
-                                <text class="color-#DC143C font-600">¥ {{ item.price }}</text>
-                                <text class="old_price">¥ {{ item.specialPrice }}</text>
-                            </view>
+
+<!--            <view class="hot-sales-grid">-->
+<!--              <template v-if="!specialProducts.length">-->
+<!--                <u-empty text="暂无商品数据" mode="data"></u-empty>-->
+<!--              </template>-->
+<!--              <template v-else>-->
+<!--                <view-->
+<!--                    v-for="item in specialProducts"-->
+<!--                    :key="item.productId"-->
+<!--                    class="hot-sales-item"-->
+<!--                    @click="toDetail(item.productId)"-->
+<!--                >-->
+<!--                  <image-->
+<!--                      :src="item.attribute.carouselUrl"-->
+<!--                      mode="aspectFill"-->
+<!--                      class="product-image"-->
+<!--                  />-->
+<!--                  <view class="product-info">-->
+<!--                    <text class="product-name text-cut-2">{{ item.attribute.desc }}</text>-->
+<!--                    <view class="product-price">-->
+<!--                      <text class="price-symbol">¥</text>-->
+<!--                      <text class="price-value">{{ item.price }}</text>-->
+<!--                      <view class="cart-icon">-->
+<!--                        <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>-->
+<!--                      </view>-->
+<!--                    </view>-->
+<!--                  </view>-->
+<!--                </view>-->
+<!--              </template>-->
+<!--            </view>-->
+            <view class="hot-sales-grid">
+                <template v-for="item in 9" :key="item">
+                  <view
+                      class="hot-sales-item"
+                  >
+                    <image
+                        src="/pagesA/static/blackTea.webp"
+                        mode="aspectFill"
+                        class="product-image"
+                    />
+                    <view class="product-info">
+                      <text class="product-name text-cut-2">简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介简介</text>
+                      <view class="product-price">
+                        <view class="flex items-center gap-2">
+                          <view>
+                            <text class="price-symbol">¥</text>
+                            <text class="price-value">100</text>
+                          </view>
+                          <view class="line-through text-2.5 fw-500 color-#949494">
+                            <text>¥</text>
+                            <text>100</text>
+                          </view>
                         </view>
-                    </view>
-                </template>
-            </u-scroll-list>
-              
-        </view>
-        <view class="bg-#fff px-4">
-        <view class="text-5 font-600">热门推荐</view>
-            <template v-if="!recommendProducts.length">
-                <u-empty
-                    text="暂无商品数据"
-                    mode="data"
-                >
-                </u-empty>
-            </template>
-            <template v-else>
-                <template v-for="item of recommendProducts" :key="item.id">
-                    <view class="mt-5">
-                        <view class="hot_card layout-items-center" @click="toDetail(item.productId)">
-                            <image :src="item.attribute.carouselUrl" mode="aspectFit" class="w-30 h-30" />
-                            <view class="flex flex-col">
-                                <text class="color-#999 content">
-                                    {{ item.attribute.desc }}
-                                </text>
-                                <text class="color-#DC143C font-600">
-                                    ¥ {{ item.price }}
-                                </text>
-                            </view>
+                        <view class="cart-icon">
+                          <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
                         </view>
+                      </view>
                     </view>
+                  </view>
                 </template>
-            </template>
+            </view>
+          </view>
         </view>
     </view>
 </template>
 
 <style scoped>
-    :deep(.u-notice__content__text text) {
-        color: #5D99C0 !important;
-    }
-
     .nav {
         min-width: 170px;
         display: flex;
@@ -199,14 +231,6 @@
         transition: all 0.3s;
         box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
     }
-
-    /* .nav:hover {
-        border: 1px solid white;
-    }
-
-    .nav:active {
-        box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
-    } */
 
     .goods_item {
         margin-left: 20px;
@@ -231,6 +255,7 @@
     .hot_card {
         padding: 10px;
         border-radius: 20px;
+        border: 2rpx solid #1E4F23;
         background: #e0e0e0;
         box-shadow: 20px 20px 60px #bebebe,
                 -20px -20px 60px #ffffff;
@@ -249,6 +274,112 @@
         text-overflow: ellipsis;
         /* 需要设置这个才能使得省略号生效 */
         white-space: normal;
+    }
+
+    .hot-sales-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30rpx 0;
+    }
+
+    .more-btn {
+      display: flex;
+      align-items: center;
+      gap: 4rpx;
+    }
+
+    .hot-sales-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20rpx;
+    }
+
+    .hot-sales-item {
+      background: #fff;
+      border-radius: 16rpx;
+      overflow: hidden;
+      box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .hot-sales-item:active {
+      transform: scale(0.98);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 300rpx;
+      background: #f5f5f5;
+    }
+
+    .product-info {
+      padding: 20rpx;
+    }
+
+    .product-name {
+      font-size: 28rpx;
+      color: #333;
+      line-height: 1.4;
+      height: 80rpx;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      margin-bottom: 16rpx;
+    }
+
+    .product-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .price-symbol {
+      font-size: 24rpx;
+      color: #ff4d4f;
+    }
+
+    .price-value {
+      font-size: 32rpx;
+      font-weight: bold;
+      color: #ff4d4f;
+      margin-right: auto;
+    }
+
+    .cart-icon {
+      width: 60rpx;
+      height: 60rpx;
+      background: #1E4F23;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4rpx 8rpx rgba(30, 79, 35, 0.2);
+    }
+
+    /* 添加文本截断工具类 */
+    .text-cut-2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    /* 优化原有热门推荐卡片样式 */
+    .hot_card {
+      padding: 20rpx;
+      border-radius: 16rpx;
+      border: 2rpx solid #1E4F23;
+      background: #fff;
+      box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+      margin-bottom: 20rpx;
+      transition: transform 0.3s ease;
+    }
+
+    .hot_card:active {
+      transform: scale(0.98);
     }
 </style>
 

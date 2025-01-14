@@ -44,6 +44,18 @@
 					}
 				},
 				{
+					"path": "pages/search/index",
+					"style": {
+						"navigationBarTitleText": ""
+					}
+				},
+				{
+					"path": "pages/teaCulture/index",
+					"style": {
+						"navigationBarTitleText": "茶文化"
+					}
+				},
+				{
 					"path": "pages/goodsItem/index",
 					"style": {
 						"navigationBarTitleText": "商品详情"
@@ -141,7 +153,7 @@
 				{
 					"path": "pages/my/moneny",
 					"style": {
-						"navigationBarTitleText": "汉币中心"
+						"navigationBarTitleText": "余额充值"
 					}
 				},
 				{
