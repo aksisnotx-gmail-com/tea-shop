@@ -76,7 +76,6 @@ public class ProductDetailsEntity extends Entity {
     @Max(value = 1, message = "异常参数", groups = {INSERT.class,UPDATE.class})
     private int isSpecial;
 
-    //商品类型：汉服、首饰  List<ProductType>
     @Schema(description = "商品类型ID，一个商品可以在多个分类")
     @TableField(typeHandler = JacksonTypeHandler.class)
     @JsonView({INSERT.class,UPDATE.class})
