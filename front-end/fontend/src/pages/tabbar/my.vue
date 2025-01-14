@@ -154,6 +154,9 @@
         });
     }
 
+    onMounted(() => {
+      userStore.getUserInfo()
+    })
 </script>
 
 <template>
@@ -164,11 +167,11 @@
             <view class="flex flex-col gap-3">
               <view>
                 <text class="text-3.25 fw-700">昵称: </text>
-                <text class="text-3.25 fw-500">ApiCaller</text>
+                <text class="text-3.25 fw-500">{{ userStore.userInfo?.username || '' }}</text>
               </view>
               <view>
                 <text class="text-3.25 fw-700">手机号码: </text>
-                <text class="text-3.25 fw-500">13890356481</text>
+                <text class="text-3.25 fw-500">{{ userStore.userInfo.phoneNumber || ''}}</text>
               </view>
             </view>
           </view>

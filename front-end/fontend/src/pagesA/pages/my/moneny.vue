@@ -81,7 +81,7 @@
     <view class="h-100vh bg-#F2F2F2">
         <view class="bg-#fff">
             <view class="h-30 layout-abs-center font-600">
-                <text class="color-#666">我的汉币: &nbsp;&nbsp;</text>
+                <text class="color-#666">我的和敬币: &nbsp;&nbsp;</text>
                 <text class="color-#1E4F23">{{ curMoneny }}</text>
             </view>
             <view class="flex items-center">
@@ -110,9 +110,9 @@
                 </view>
             </view>
             <u-divider text="" hairline></u-divider>
-            <view class="h-30 flex flex-col py-3 px-3 gap-4">
-                <text class="text-5 ">汉币规则</text>
-                <text>汉币为本店铺通用货币, 可通过充值获得1rmb= 1汉币。</text>
+            <view class="h-30 flex flex-col py-3 px-3 gap-4 color-#666">
+                <text class="text-3.5 fw-700">和敬币规则</text>
+                <text class="text-3 fw-500">"和敬"源于茶道精神中的“和、敬、清、寂”, 和敬币为本店铺通用货币, 可通过充值获得1rmb= 1和敬币。</text>
             </view>
         </view>
 

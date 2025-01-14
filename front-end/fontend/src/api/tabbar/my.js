@@ -41,9 +41,9 @@ export function getWaitEvaluateApi (current) {
     })
 }
 
-// 汉币中心
+// 和敬币中心
 /**
- * @description 查询汉币余额
+ * @description 查询和敬币余额
  */
 export function getWalletApi () {
     return service({

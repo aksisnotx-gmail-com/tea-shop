@@ -13,6 +13,10 @@ export function removeToken() {
 	return uni.removeStorageSync(TokenKey)
 }
 
-export function setUserInfo (userInfo) {
+export function setLocalUserInfo (userInfo) {
 	return uni.setStorageSync(userInfoKey, userInfo)
+}
+
+export function getLocalUserInfo () {
+	return uni.getStorageSync(userInfoKey)
 }

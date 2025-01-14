@@ -1,6 +1,9 @@
 <script setup>
 import { loginApi } from "@/api/auth";
-import {setToken, setUserInfo} from "@/utils/auth";
+import { setToken } from "@/utils/auth";
+import { useUserStore } from '@/store/modules/user'
+
+const userStore = useUserStore()
 
 const form = ref({
   phoneNumber: '',
@@ -26,7 +29,7 @@ const login = async () => {
     const res = await loginApi(form.value)
     if(res.code === 200) {
       setToken(res.data.token)
-      setUserInfo(res.data)
+      userStore.setUserInfo(res.data)
       uni.showToast({
         title: '登录成功',
         icon: 'none'

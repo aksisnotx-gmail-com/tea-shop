@@ -217,78 +217,6 @@
 </template>
 
 <style scoped>
-    .nav {
-        min-width: 170px;
-        display: flex;
-        padding: 10px 18px;
-        color: #090909;
-        font-size: 18px;
-        border-radius: 20px;
-        /* background: #e8e8e8; */
-        background-color: #fff;
-        cursor: pointer;
-        border: 1px solid #e8e8e8;
-        transition: all 0.3s;
-        box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
-    }
-
-    .goods_item {
-        margin-left: 20px;
-        background: white;
-        border-radius: 10px;
-        transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1),
-             0 0  0 2px rgb(190, 190, 190),
-             0.3em 0.3em 1em rgba(0,0,0,0.3);
-    }
-
-    .goods_item:first-child {
-        margin-left: 0;
-    }
-
-    .old_price {
-        text-decoration: line-through;
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .hot_card {
-        padding: 10px;
-        border-radius: 20px;
-        border: 2rpx solid #1E4F23;
-        background: #e0e0e0;
-        box-shadow: 20px 20px 60px #bebebe,
-                -20px -20px 60px #ffffff;
-    }
-
-    .content {
-        font-size: 14px;
-        /* 设置最大高度为300px */
-        max-height: 80px;
-        /* 隐藏超出的内容 */
-        overflow: hidden;
-        /* 显示省略号来表示被截断的文本，需要设置文本的装饰方式 */
-        display: -webkit-box;
-        -webkit-line-clamp: 4; /* 用来限制在一个块元素显示的文本的行数 */
-        -webkit-box-orient: vertical;
-        text-overflow: ellipsis;
-        /* 需要设置这个才能使得省略号生效 */
-        white-space: normal;
-    }
-
-    .hot-sales-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 30rpx 0;
-    }
-
-    .more-btn {
-      display: flex;
-      align-items: center;
-      gap: 4rpx;
-    }
-
     .hot-sales-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -365,21 +293,6 @@
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
-    }
-
-    /* 优化原有热门推荐卡片样式 */
-    .hot_card {
-      padding: 20rpx;
-      border-radius: 16rpx;
-      border: 2rpx solid #1E4F23;
-      background: #fff;
-      box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-      margin-bottom: 20rpx;
-      transition: transform 0.3s ease;
-    }
-
-    .hot_card:active {
-      transform: scale(0.98);
     }
 </style>
 
