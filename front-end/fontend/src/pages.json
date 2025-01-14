@@ -10,9 +10,9 @@
 	"pages": [
 		{ "path": "pages/home/index" },
 		{
-			"path": "pages/tabbar/watch",
+			"path": "pages/tabbar/sort",
 			"style": {
-				"navigationBarTitleText": "发现",
+				"navigationBarTitleText": "分类",
 				"enablePullDownRefresh": true,
 				"onReachBottomDistance": 50
 			}
@@ -168,7 +168,7 @@
 	],
 	"tabBar": {
 		"color": "#bfbfbf",
-		"selectedColor": "#d81e06",
+		"selectedColor": "#1E4F23",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [
@@ -179,10 +179,10 @@
 				"text": "首页"
 			},
 			{
-				"pagePath": "pages/tabbar/watch",
-				"iconPath": "static/tabbar/watch.png",
-				"selectedIconPath": "static/tabbar/awatch.png",
-				"text": "发现"
+				"pagePath": "pages/tabbar/sort",
+				"iconPath": "static/tabbar/sort.png",
+				"selectedIconPath": "static/tabbar/asort.png",
+				"text": "分类"
 			},
 			{
 				"pagePath": "pages/tabbar/car",
