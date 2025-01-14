@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.aks</groupId>
-  <artifactId>clothes-mall</artifactId>
+  <artifactId>tea-shop</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
 
-  <name>clothes-mall</name>
+  <name>tea-shop</name>
   <modules>
     <module>application</module>
     <module>sdk</module>

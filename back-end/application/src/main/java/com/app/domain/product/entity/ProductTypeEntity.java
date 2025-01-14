@@ -1,18 +1,14 @@
 package com.app.domain.product.entity;
 
-import java.io.Serial;
-import java.util.Date;
-
 import com.app.domain.base.Entity;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * 商品分类类型(SysProductType)表实体类
@@ -34,5 +30,9 @@ public class ProductTypeEntity extends Entity {
     @NotBlank(message = "类型不能为空", groups = {INSERT.class,UPDATE.class})
     private String type;
 
+    //图片
+    @Schema(description = "图片")
+    @JsonView({INSERT.class,UPDATE.class})
+    private String imgUrl;
 }
 

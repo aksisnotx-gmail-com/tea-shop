@@ -75,6 +75,7 @@ create table sys_product_details(
 create table sys_product_type
 (
     type        varchar(255) null comment '类型',
+    img_url     varchar(255) null comment '图片',
     id          varchar(255) not null comment 'id'
         primary key,
     update_time timestamp    null comment '更新时间',
@@ -145,7 +146,9 @@ insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
                                                            ('熟茶','5',NOW());
 
 # 初始用户
-insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
-values ('1','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','admin',NOW(),1);
-insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
-values ('2','BUYER','e10adc3949ba59abbe56e057f20f883e','test-buyer','test-buyer',NOW(),1);
+insert into sys_user (id, phone_number,role, pwd, nickname, username, create_time,gender)
+values ('1','15156246001','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','admin',NOW(),1),
+       ('2','15156246002','BUYER','e10adc3949ba59abbe56e057f20f883e','test-buyer','test-buyer',NOW(),1);
+
+# 初始化钱包
+insert into sys_wallet (id, balance, user_id, create_time, update_time) values ('1', 0, '2', NOW(), NOW());
