@@ -186,7 +186,8 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
     }
 
     public List<OrderEntity> getDetailsByProductId(String productId) {
-        return this.lambdaQuery().list().stream().filter(t -> t.getProductDetail().getId().equals(productId)).toList();
+        //return this.lambdaQuery().list().stream().filter(t -> t.getProductDetail().getId().equals(productId)).toList();
+        return null;
     }
 
     private OrderEntity getOne(String orderId,OrderState nextState,UserEntity user) {

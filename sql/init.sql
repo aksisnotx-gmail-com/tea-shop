@@ -62,8 +62,10 @@ create table sys_product_details(
     carousel         varchar(255) null comment '轮播图来自于sku',
     product_name     varchar(255) null,
     price           decimal      null comment '价格',
+    special_price     decimal          null comment '特惠价格',
     stock           int          null comment '库存',
-    is_recommend    int          null comment '是否推荐，1 是 0 不是',
+    is_popular    int          null comment '是否热销，1 是 0 不是',
+    is_special    int          null comment '是否特惠，1 是 0 不是',
     create_time      timestamp    null comment '创建时间',
     update_time      timestamp    null,
     product_type_ids text null comment '商品类型ID'
@@ -135,12 +137,15 @@ create table sys_wallet_record
 
 
 
-# 初始值
+# 初始分类
 insert into sys_product_type(type, id, update_time) values ('花茶','1',NOW()),
                                                            ('红茶','2',NOW()),
                                                            ('白茶','3',NOW()),
                                                            ('生茶','4',NOW()),
                                                            ('熟茶','5',NOW());
 
+# 初始用户
 insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
 values ('1','ADMIN','e10adc3949ba59abbe56e057f20f883e','admin','admin',NOW(),1);
+insert into sys_user (id, role, pwd, nickname, username, create_time,gender)
+values ('2','BUYER','e10adc3949ba59abbe56e057f20f883e','test-buyer','test-buyer',NOW(),1);
