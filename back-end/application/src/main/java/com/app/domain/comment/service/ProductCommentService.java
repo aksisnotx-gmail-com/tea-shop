@@ -33,7 +33,7 @@ public class ProductCommentService extends AbstractService<ProductCommentMapper,
     public Boolean publishComment(ProductCommentEntity param, String loginUserId) {
         OrderEntity entity = orderService.getById(param.getOrderId());
         AssertUtils.assertTrue(orderService.hasOrder(loginUserId,entity.getId()), "未改买的商品无法评论");
-        AssertUtils.assertTrue(entity.getIsEvaluate().equals(OrderEntity.UN_EVALUATE), "该商品已评价/未收货");
+        AssertUtils.assertTrue(entity.getIsEvaluate().equals(OrderEntity.UN_EVALUATE), "该商品已评价过");
         param.setUserId(loginUserId);
         //修改订单为已评价
         entity.setIsEvaluate(OrderEntity.EVALUATE);
