@@ -1,6 +1,5 @@
 package com.app.domain.comment.entity;
 
-import cn.hutool.json.JSONUtil;
 import com.app.domain.base.Entity;
 import com.app.domain.user.entity.UserEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -58,8 +57,8 @@ public class ProductCommentEntity extends Entity {
     private List<String> commentImgUrl;
 
     //商品ID
-    @Schema(description = "商品ID")
-    @NotBlank(message = "商品ID不能为空",groups = INSERT.class)
+    @Schema(description = "订单ID")
+    @NotBlank(message = "订单ID不能为空",groups = INSERT.class)
     @JsonView(INSERT.class)
     private String orderId;
 

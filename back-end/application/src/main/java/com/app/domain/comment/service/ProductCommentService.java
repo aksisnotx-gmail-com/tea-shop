@@ -35,15 +35,15 @@ public class ProductCommentService extends AbstractService<ProductCommentMapper,
         AssertUtils.assertTrue(orderService.hasOrder(loginUserId,entity.getId()), "未改买的商品无法评论");
         AssertUtils.assertTrue(entity.getIsEvaluate().equals(OrderEntity.UN_EVALUATE), "该商品已评价/未收货");
         param.setUserId(loginUserId);
-        //修改顶单为已评价
+        //修改订单为已评价
         entity.setIsEvaluate(OrderEntity.EVALUATE);
         return this.save(param) && orderService.updateById(entity);
     }
 
     public Page<ProductCommentEntity> queryAllComment(String productId) {
-        //查询商品
+        //查询订单
         List<OrderEntity> details = orderService.getDetailsByProductId(productId);
-        //过滤出已评价的商品
+        //过滤出已评价的订单
         List<OrderEntity> evaluateOrders = details.stream().filter(t -> t.getIsEvaluate().equals(OrderEntity.EVALUATE)).toList();
         //如果评价的商品为空则表示此商品未被评价
         if (evaluateOrders.isEmpty()) {
