@@ -19,7 +19,7 @@ public class CommentVO implements Serializable {
     @Serial
     private static final long serialVersionUID = -8668238922720604323L;
 
-    @Schema(description = "评价")
+    @Schema(description = "订单")
     private OrderEntity order;
 
     @Schema(description = "评价")

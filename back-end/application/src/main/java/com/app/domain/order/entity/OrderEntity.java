@@ -1,18 +1,20 @@
 package com.app.domain.order.entity;
 
+import cn.hutool.core.util.IdUtil;
 import com.app.domain.base.Entity;
 import com.app.domain.order.enmus.OrderState;
 import com.app.domain.product.entity.ProductDetailsEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * 订单列表(SysOrder)表实体类
@@ -40,30 +42,68 @@ public class OrderEntity extends Entity {
 
     //订单状态
     @Schema(description = "订单状态")
+    @JsonView({IGNORE.class})
     private OrderState state;
 
     //下单编号
     @Schema(description = "下单编号")
+    @JsonView({IGNORE.class})
     private String orderNumber;
 
     @Schema(description = "用户ID")
+    @JsonView({IGNORE.class})
     private String userId;
 
     @Schema(description = "收货地址")
+    @JsonView({UPDATE.class})
+    @NotBlank(message = "收货地址不能为空",groups = {UPDATE.class})
     private String deliveryAddress;
+
+    @Schema(description = "商品id")
+    @JsonView({IGNORE.class})
+    private String productId;
 
     @Schema(description = "本次订单所有的商品信息，防止删除/修改出现问题商品,解决处在订单中的商品需要被冻结问题")
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<ProductDetailsEntity> products;
+    @JsonView({IGNORE.class})
+    private ProductDetailsEntity product;
 
     //是否评价(1 已评价 0 未评价 -1 未购买)
     @Schema(description = "是否评价(1 已评价 0 未评价 -1 表示未处理商品评价 2 已删除 )")
+    @JsonView({IGNORE.class})
     private Integer isEvaluate;
 
     @Schema(description = " 本次订单的商品数量")
+    @JsonView({IGNORE.class})
     private Integer number;
 
     @Schema(description = "总价")
+    @JsonView({IGNORE.class})
     private BigDecimal totalPrice;
+
+    @Schema(description = "备注")
+    @JsonView({IGNORE.class})
+    private String remark;
+
+    public static OrderEntity create(OrderState state,
+                                     String userId,
+                                     String deliveryAddress,
+                                     ProductDetailsEntity product,
+                                     Integer number,
+                                     BigDecimal totalPrice,
+                                     String remark) {
+        OrderEntity order = new OrderEntity();
+        order.setState(state);
+        order.setOrderNumber(IdUtil.simpleUUID());
+        order.setUserId(userId);
+        order.setProductId(product.getId());
+        order.setDeliveryAddress(deliveryAddress);
+        order.setProduct(product);
+        order.setIsEvaluate(UN_HANDLER);
+        order.setNumber(number);
+        order.setTotalPrice(totalPrice);
+        order.setRemark(remark);
+        return order;
+    }
 }
 

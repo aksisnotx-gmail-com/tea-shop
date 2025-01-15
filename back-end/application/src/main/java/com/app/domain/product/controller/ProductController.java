@@ -4,12 +4,16 @@ import com.app.controller.Controller;
 import com.app.domain.base.Entity;
 import com.app.domain.product.entity.ProductDetailsEntity;
 import com.app.domain.product.entity.ProductTypeEntity;
+import com.app.domain.user.entity.LoginUser;
 import com.app.toolkit.web.CommonPageRequestUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.sdk.resp.RespEntity;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +24,7 @@ import java.util.List;
  * @since 2024/3/19
  */
 
-@Tag(name = "[首页 - 商品] - 2025/01/14")
+@Tag(name = "[首页 - 商品] - 2025/01/15")
 @RequestMapping("/product")
 @RestController
 @Validated
@@ -114,10 +118,20 @@ public class ProductController extends Controller {
     @GetMapping("/detail/search")
     @Operation(summary = "根据商品名字搜索商品 - [小程序 & 后台]")
     public RespEntity<Page<ProductDetailsEntity>> search(@RequestParam String productName) {
-        return RespEntity.success(productDetailsService.
-                lambdaQuery().
-                like(ProductDetailsEntity::getProductName, productName).
-                page(CommonPageRequestUtils.defaultPage()));
+        return RespEntity.success(productDetailsService.search(productName, LoginUser.getLoginUserId()));
+    }
+
+    @GetMapping("/detail/search/history")
+    @Operation(summary = "历史记录 & 最近记录 - [小程序]")
+    public RespEntity<?> getSearchHistory() {
+        return RespEntity.success(productDetailsService.getSearchHistory(LoginUser.getLoginUserId()));
+    }
+
+    @GetMapping("/detail/search/history/delete")
+    @Operation(summary = "删除历史记录 - [小程序]")
+    @Parameter(name = "type",description = "type=0删除历史记录，type=1删除最近记录")
+    public RespEntity<Boolean> deleteSearchHistory(@RequestParam @Validated @Min(value = 0,message = "type错误" ) @Max(value = 1,message = "type错误" ) int type) {
+        return RespEntity.success(productDetailsService.deleteSearchHistory(type,LoginUser.getLoginUserId()));
     }
 
     @GetMapping("/specialProducts")
@@ -132,7 +146,10 @@ public class ProductController extends Controller {
     @Operation(summary = "热销商品 - [小程序 & 后台]")
     public RespEntity<Page<ProductDetailsEntity>> getPopularProducts() {
         return RespEntity.success(productDetailsService.
-                lambdaQuery().eq(ProductDetailsEntity::getIsPopular, ProductDetailsEntity.IS_POPULAR).
+                lambdaQuery().isNotNull(ProductDetailsEntity::getSalesQuantity).
+                //销量不为0
+                gt(ProductDetailsEntity::getSalesQuantity, 0).
+                orderByDesc(ProductDetailsEntity::getSalesQuantity).
                 page(CommonPageRequestUtils.defaultPage()));
     }
 }
