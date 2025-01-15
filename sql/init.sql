@@ -35,9 +35,10 @@ create table sys_order
     order_number     varchar(255) null comment '下单编号',
     user_id          varchar(255) null,
     delivery_address varchar(255) null comment '配送地址',
-    products   text         null comment '本次订单所有的商品信息',
-    is_evaluate      int          null comment '是否评价了 1 已评价 -1 未处理商品 0 未评价 ',
-    number       int          null comment 'sku数量',
+    product_id       varchar(255) null comment '商品ID',
+    product   text         null comment '本次订单所有的商品信息',
+    is_evaluate      int          null comment '是否评价了 1 已评价 -1 未处理商品 0 未评价 2 已删除',
+    number       int          null comment '数量',
     total_price      decimal      null comment '总价格',
     remark           varchar(500) null comment '备注'
 )

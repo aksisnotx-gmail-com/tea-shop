@@ -4,6 +4,9 @@ import com.app.domain.base.AbstractService;
 import com.app.domain.order.enmus.OrderState;
 import com.app.domain.order.entity.OrderEntity;
 import com.app.domain.order.mapper.OrderMapper;
+import com.app.domain.order.param.OrderParam;
+import com.app.domain.product.entity.ProductDetailsEntity;
+import com.app.domain.product.service.ProductDetailsService;
 import com.app.domain.user.entity.UserEntity;
 import com.app.domain.user.enums.Role;
 import com.app.domain.user.service.UserService;
@@ -14,8 +17,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sdk.util.asserts.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.app.domain.order.enmus.OrderState.MAKE_PAYMENT;
 
 /**
  * @author xxl
@@ -25,9 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
 
-    //private final ProductSkuService skuService;
-
-    //private final ProductDetailsService productDetailsService;
+    private final ProductDetailsService productDetailsService;
 
     private final OrderAction orderAction;
 
@@ -51,23 +58,21 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
                 eq(OrderEntity::getState, OrderState.CONFIRM_RECEIPT.name()).exists();
     }
 
-    /*@Transactional(rollbackFor = RuntimeException.class)
-    public  List<OrderEntity> createOrder(List<OrderParam> orderParam,String userId) {
+    @Transactional(rollbackFor = RuntimeException.class)
+    public synchronized List<OrderEntity> createOrder(List<OrderParam> orderParam, String userId) {
         List<OrderEntity> list = orderParam.stream().map(t -> {
-            ProductSkuEntity entity = skuService.getById(t.getSkuId());
-            //如果库存满足条件则扣减,也就是说后面没必要检查库存
-            skuService.checkStock(entity.getStock(), t.getNumber());
-            //设置购买数量
-            skuService.reduceSkuStock(entity.getId(), t.getNumber());
+            ProductDetailsEntity product = productDetailsService.getById(t.getProductId());
+            productDetailsService.checkStock(t.getNumber(),product.getId());
+            //扣减库存
+            productDetailsService.addOrSubStock(t.getNumber(),product.getId(),false);
             //创建订单
             return OrderEntity.create(OrderState.PLACE_ORDER,
                     userId,
                     t.getDeliveryAddress(),
-                    entity,
-                    productDetailsService.getById(entity.getProductId()),
+                    product,
                     t.getNumber(),
                     t.getTotalPrice(),
-                    t.getSize());
+                    t.getRemark());
         }).toList();
         return this.saveBatch(list) ? list : new ArrayList<>();
     }
@@ -75,15 +80,15 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
     @Transactional(rollbackFor = RuntimeException.class)
     public Boolean closeOrder(String orderId, UserEntity user) {
         OrderState closeOrder = OrderState.CLOSE_ORDER;
-        OrderEntity one = Role.ADMIN.equals(user.getRole()) ? getOneByAdmin(orderId, closeOrder, user) : getOne(orderId, closeOrder, user);
+        OrderEntity order = Role.ADMIN.equals(user.getRole()) ? getOneByAdmin(orderId, closeOrder, user) : getOne(orderId, closeOrder, user);
         //如果允许关闭订单 , 1.订单中的商品如果存在数量加回来 2.订单中的商品不存在则忽略
-        ProductSkuEntity sku = skuService.getById(one.getProductSku().getId(), false);
-        if (!Objects.isNull(sku)) {
+        ProductDetailsEntity product = productDetailsService.getById(order.getProductId());
+        if (!Objects.isNull(product)) {
             //存在
-            skuService.addSkuStock(sku.getId(),one.getSkuNumber());
+            productDetailsService.addOrSubStock(order.getNumber(), product.getId(), true);
         }
-        one.setState(closeOrder);
-        return this.updateById(one);
+        order.setState(closeOrder);
+        return this.updateById(order);
     }
 
     @Transactional(rollbackFor = RuntimeException.class)
@@ -92,10 +97,10 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         OrderEntity one = getOne(orderId,makePayment , user);
         //获取账单总余额
         BigDecimal price = one.getTotalPrice();
-        walletService.expenditure(price, user);
+        boolean expenditure = walletService.expenditure(price, user);
         //设置状态
         one.setState(makePayment);
-        return this.updateById(one);
+        return this.updateById(one) && expenditure;
     }
 
     public Boolean applyRefundOrder(String orderId, UserEntity loginUser) {
@@ -111,20 +116,18 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         //管理员做的事不需要买家
         OrderEntity one = getOneByAdmin(orderId, refund,user);
         one.setState(refund);
-        ProductSkuEntity entity = skuService.getById(one.getProductSku().getId(), false);
+        ProductDetailsEntity product = productDetailsService.getById(one.getProductId(), false);
         //如果商品存在则返回库存否则不返回
-        if (!Objects.isNull(entity)) {
-            entity.setStock(entity.getStock() + one.getSkuNumber());
-            skuService.updateById(entity);
+        if (Objects.nonNull(product)) {
+            productDetailsService.addOrSubStock(product.getStock() + one.getNumber(), product.getId(), true);
         }
         //获取账单总余额0
         BigDecimal price = one.getTotalPrice();
         //余额 + 商品总价钱
-        walletService.recharge(price,userService.getById(one.getUserId()));
+        Boolean recharge = walletService.recharge(price, userService.getById(one.getUserId()));
         //更新订单 && 钱包 && 更新商品
-        return this.updateById(one);
-    }*/
-
+        return this.updateById(one) && recharge;
+    }
     public Boolean sendOrder(String orderId, UserEntity loginUser) {
         OrderState send = OrderState.SHIP_ORDER;
         //不需要获取管理员用户
@@ -170,7 +173,7 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
     }
 
     public Page<OrderEntity> getWaitReceive(UserEntity user) {
-        return getOrderByUserId(user,OrderEntity::getState,OrderState.SHIP_ORDER.name(),OrderState.MAKE_PAYMENT.name());
+        return getOrderByUserId(user,OrderEntity::getState,OrderState.SHIP_ORDER.name(), MAKE_PAYMENT.name());
     }
 
     public Page<OrderEntity> getWaitEvaluate(UserEntity user) {
@@ -225,7 +228,6 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         if (Role.ADMIN.equals(loginUser.getRole())) {
             return this.lambdaQuery().eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
         }
-
         return new Page<>();
     }
 }

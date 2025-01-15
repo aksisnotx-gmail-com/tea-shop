@@ -4,13 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author xxl
@@ -30,7 +28,7 @@ public class OrderParam implements Serializable {
 
     @Schema(description = "商品id")
     @NotBlank(message = "商品id不能为空")
-    private String skuId;
+    private String productId;
 
     @Schema(description = "商品数量")
     @Min(value = 1, message = "商品数量最小为1")
@@ -40,7 +38,6 @@ public class OrderParam implements Serializable {
     @NotBlank(message = "总价格不能为空")
     private BigDecimal totalPrice;
 
-    @Schema(description = "size")
-    @NotEmpty(message = "尺码不能为空")
-    private String size;
+    @Schema(description = "备注")
+    private String remark;
 }

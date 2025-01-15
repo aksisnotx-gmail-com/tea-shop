@@ -4,6 +4,7 @@ import com.app.domain.base.AbstractService;
 import com.app.domain.product.entity.ProductDetailsEntity;
 import com.app.domain.product.entity.ProductTypeEntity;
 import com.app.domain.product.mapper.ProductDetailsMapper;
+import com.sdk.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,43 @@ public class ProductDetailsService extends AbstractService<ProductDetailsMapper,
             }
         });
         return typeService.removeById(typeId);
+    }
+
+    /**
+     * 检查库存,不足抛出异常
+     * @param deductionQuantity 扣减数量
+     * @param productId 产品 ID
+     */
+    public synchronized void checkStock(int deductionQuantity,String productId) {
+        if (deductionQuantity <= 0) {
+            return;
+        }
+        int stock = this.getById(productId, true).getStock();
+
+        if ((stock - deductionQuantity) < 0) {
+            throw new GlobalException("库存不足");
+        }
+    }
+
+    /**
+     *  增加或者扣减库存
+     */
+    public synchronized boolean addOrSubStock(int quantity, String productId,boolean isAdd) {
+        if (quantity > 0) {
+            return false;
+        }
+
+        ProductDetailsEntity entity = this.getById(productId, true);
+        if (isAdd) {
+            entity.setStock(entity.getStock() + quantity);
+            return this.updateById(entity);
+        }
+
+        if (entity.getStock() - quantity < 0) {
+            return false;
+        }
+
+        entity.setStock(entity.getStock() - quantity);
+        return this.updateById(entity);
     }
 }

@@ -8,7 +8,6 @@ import com.app.domain.user.entity.UserEntity;
 import com.app.domain.user.enums.Role;
 import com.app.toolkit.web.CommonPageRequestUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sdk.exception.GlobalException;
 import com.sdk.util.asserts.AssertUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,11 +24,8 @@ public class ShoppingCartService extends AbstractService<ShoppingCartMapper, Sho
 
     public synchronized Boolean addProduct(ShoppingCartEntity entity, UserEntity user) {
         AssertUtils.assertTrue(Role.BUYER.equals(user.getRole()), "操作异常");
-        //库存数量
-        Integer stock = productService.getById(entity.getProductId()).getStock();
-        if (entity.getNumber() > stock) {
-            throw new GlobalException("库存不足");
-        }
+        //检查库存
+        productService.checkStock(entity.getNumber(), entity.getProductId());
         entity.setUserId(user.getId());
         return this.save(entity);
     }
@@ -42,13 +38,8 @@ public class ShoppingCartService extends AbstractService<ShoppingCartMapper, Sho
         if (sumNumber <= 0) {
             return this.removeById(entity.getId());
         }
-
-        //库存
-        int stock = productService.getById(entity.getProductId()).getStock();
-        if (sumNumber > stock) {
-            throw new GlobalException("库存不足");
-        }
-
+        //库存检查
+        productService.checkStock(sumNumber, entity.getProductId());
         //更新
         entity.setNumber(sumNumber);
         return this.updateById(entity);

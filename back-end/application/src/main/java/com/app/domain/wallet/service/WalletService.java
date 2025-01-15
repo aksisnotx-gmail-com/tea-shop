@@ -28,8 +28,8 @@ public class WalletService extends AbstractService<WalletMapper, WalletEntity> {
         return this.lambdaQuery().eq(WalletEntity::getUserId, userId).one();
     }
 
-    public Boolean initWallet(String userId) {
-        return this.save(WalletEntity.create(userId));
+    public void initWallet(String userId) {
+        this.save(WalletEntity.create(userId));
     }
 
 

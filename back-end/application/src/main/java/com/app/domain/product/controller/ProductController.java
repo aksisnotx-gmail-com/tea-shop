@@ -135,6 +135,7 @@ public class ProductController extends Controller {
                 lambdaQuery().isNotNull(ProductDetailsEntity::getSalesQuantity).
                 //销量不为0
                 gt(ProductDetailsEntity::getSalesQuantity, 0).
+                orderByDesc(ProductDetailsEntity::getSalesQuantity).
                 page(CommonPageRequestUtils.defaultPage()));
     }
 }
