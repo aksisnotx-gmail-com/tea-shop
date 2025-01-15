@@ -4,6 +4,7 @@ import com.app.controller.Controller;
 import com.app.domain.base.Entity;
 import com.app.domain.product.entity.ProductDetailsEntity;
 import com.app.domain.product.entity.ProductTypeEntity;
+import com.app.domain.user.entity.LoginUser;
 import com.app.toolkit.web.CommonPageRequestUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -20,7 +21,7 @@ import java.util.List;
  * @since 2024/3/19
  */
 
-@Tag(name = "[首页 - 商品] - 2025/01/14")
+@Tag(name = "[首页 - 商品] - 2025/01/15")
 @RequestMapping("/product")
 @RestController
 @Validated
@@ -114,11 +115,15 @@ public class ProductController extends Controller {
     @GetMapping("/detail/search")
     @Operation(summary = "根据商品名字搜索商品 - [小程序 & 后台]")
     public RespEntity<Page<ProductDetailsEntity>> search(@RequestParam String productName) {
-        return RespEntity.success(productDetailsService.
-                lambdaQuery().
-                like(ProductDetailsEntity::getProductName, productName).
-                page(CommonPageRequestUtils.defaultPage()));
+        return RespEntity.success(productDetailsService.search(productName, LoginUser.getLoginUserId()));
     }
+
+    @GetMapping("/detail/search/history")
+    @Operation(summary = "历史记录 & 最近记录 - [小程序]")
+    public RespEntity<?> getSearchHistory() {
+        return RespEntity.success(productDetailsService.getSearchHistory(LoginUser.getLoginUserId()));
+    }
+
 
     @GetMapping("/specialProducts")
     @Operation(summary = "特惠商品 - [小程序 & 后台]")
