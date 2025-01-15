@@ -10,7 +10,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.sdk.resp.RespEntity;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -124,6 +127,12 @@ public class ProductController extends Controller {
         return RespEntity.success(productDetailsService.getSearchHistory(LoginUser.getLoginUserId()));
     }
 
+    @GetMapping("/detail/search/history/delete")
+    @Operation(summary = "删除历史记录 - [小程序]")
+    @Parameter(name = "type",description = "type=0删除历史记录，type=1删除最近记录")
+    public RespEntity<Boolean> deleteSearchHistory(@RequestParam @Validated @Min(value = 0,message = "type错误" ) @Max(value = 1,message = "type错误" ) int type) {
+        return RespEntity.success(productDetailsService.deleteSearchHistory(type,LoginUser.getLoginUserId()));
+    }
 
     @GetMapping("/specialProducts")
     @Operation(summary = "特惠商品 - [小程序 & 后台]")

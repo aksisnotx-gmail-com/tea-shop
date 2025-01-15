@@ -30,6 +30,9 @@ public class ProductDetailsService extends AbstractService<ProductDetailsMapper,
     private static final String SEARCH_HISTORY = "search:history:";
     private static final String RECENT_SEARCH_HISTORY = "search:recent:history:";
 
+    private static final int HISTORY_TYPE = 0;
+    private static final int RESENT_HISTORY_TYPE = 1;
+
     /**
      * 限制最近搜索记录的数量
      */
@@ -118,6 +121,18 @@ public class ProductDetailsService extends AbstractService<ProductDetailsMapper,
             searchHistory = new HashSet<>();
         }
         return Map.of("recentSearchHistory",range,"searchHistory",searchHistory);
+    }
+
+    public Boolean deleteSearchHistory(int type, String loginUserId) {
+        switch (type) {
+            case HISTORY_TYPE:
+                redisUtils.delete(SEARCH_HISTORY + loginUserId);
+                return true;
+            case RESENT_HISTORY_TYPE:
+                redisUtils.delete(RECENT_SEARCH_HISTORY + loginUserId);
+                return true;
+        }
+        return false;
     }
 
     /**
