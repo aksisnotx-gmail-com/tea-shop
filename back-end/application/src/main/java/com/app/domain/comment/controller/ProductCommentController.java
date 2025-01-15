@@ -33,8 +33,15 @@ public class ProductCommentController extends Controller {
     //查询所有评论
     @GetMapping("/queryAll/{productId}")
     @Operation(summary = "查询所有评价 - [后台 & 小程序]")
-    public RespEntity<Page<ProductCommentEntity>> queryAllComment(@PathVariable String productId) {
-        return RespEntity.success(commentService.queryAllComment(productId));
+    public RespEntity<Page<ProductCommentEntity>> queryAllCommentByProductId(@PathVariable String productId) {
+        return RespEntity.success(commentService.queryAllCommentByProductId(productId));
+    }
+
+
+    @GetMapping("/queryAll")
+    @Operation(summary = "获取所有评价 - [后台]")
+    public RespEntity<Page<ProductCommentEntity>> queryAll() {
+        return RespEntity.success(commentService.queryAllComment(LoginUser.getLoginUser()));
     }
 
     //删除评论，如果角色是买家只能删除自己的评论
@@ -49,4 +56,5 @@ public class ProductCommentController extends Controller {
     public RespEntity<Page<CommentVO>> getMyEvaluate() {
         return RespEntity.success(commentService.getMyEvaluate(LoginUser.getLoginUserId()));
     }
+
 }
