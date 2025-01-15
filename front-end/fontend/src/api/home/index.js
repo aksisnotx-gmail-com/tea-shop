@@ -59,19 +59,16 @@ export function getRecommendProductsApi () {
 }
 
 /**
- * @description 获取限时特惠商品
+ * @description 获取所有商品类型
  */
-export function getSpecialProductsApi () {
+export function getProductTypeApi () {
     return service({
-        url: `product/specialProducts`,
+        url: `product/type`,
         method: 'get'
     })
 }
 
-/**
- * @description 获取所有商品类型
- */
-export function getProductTypeApi () {
+export function getTeaTypeApi () {
     return service({
         url: `product/type`,
         method: 'get'
