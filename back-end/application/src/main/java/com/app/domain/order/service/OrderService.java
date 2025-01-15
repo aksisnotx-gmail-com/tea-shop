@@ -64,7 +64,7 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
             ProductDetailsEntity product = productDetailsService.getById(t.getProductId());
             productDetailsService.checkStock(t.getNumber(),product.getId());
             //扣减库存
-            productDetailsService.addOrSubStock(t.getNumber(),product.getId(),false);
+            product = productDetailsService.addOrSubStock(t.getNumber(),product.getId(),false);
             //创建订单
             return OrderEntity.create(OrderState.PLACE_ORDER,
                     userId,
@@ -145,7 +145,6 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         return this.updateById(one);
     }
 
-
     public Boolean deleteOrder(String orderId, UserEntity loginUser) {
         OrderState delete = OrderState.DELETE_ORDER;
         OrderEntity one = getOne(orderId, delete, loginUser);
@@ -163,19 +162,6 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         return page;
     }
 
-    public OrderEntity getOrder(String orderId) {
-        return this.lambdaQuery().eq(OrderEntity::getId, orderId).one();
-    }
-
-
-    public Page<OrderEntity> getWaitPay(UserEntity user) {
-        return getOrderByUserId(user,OrderEntity::getState,OrderState.PLACE_ORDER.name());
-    }
-
-    public Page<OrderEntity> getWaitReceive(UserEntity user) {
-        return getOrderByUserId(user,OrderEntity::getState,OrderState.SHIP_ORDER.name(), MAKE_PAYMENT.name());
-    }
-
     public Page<OrderEntity> getWaitEvaluate(UserEntity user) {
         //查询出当前用户已经收货的商品
         Page<OrderEntity> page = getOrderByUserId(user, OrderEntity::getState, OrderState.CONFIRM_RECEIPT.name());
@@ -190,6 +176,25 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
 
     public List<OrderEntity> getDetailsByProductId(String productId) {
         return this.lambdaQuery().eq(OrderEntity::getProductId, productId).list();
+    }
+
+    public Page<OrderEntity> getMyEvaluateOrder(String loginUserId) {
+        return this.lambdaQuery().eq(OrderEntity::getUserId, loginUserId).
+                eq(OrderEntity::getIsEvaluate, OrderEntity.EVALUATE).
+                page(CommonPageRequestUtils.defaultPage());
+    }
+
+    public Page<OrderEntity> getOrderByType(OrderState type, UserEntity loginUser) {
+        if (Role.ADMIN.equals(loginUser.getRole())) {
+            return this.lambdaQuery().eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
+        }
+        return this.lambdaQuery().eq(OrderEntity::getUserId, loginUser.getId()).eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
+    }
+
+    public Boolean modifyOrderAddress(OrderEntity order) {
+        OrderEntity originalOrder = this.getById(order.getId());
+        originalOrder.setDeliveryAddress(order.getDeliveryAddress());
+        return this.updateById(originalOrder);
     }
 
     private OrderEntity getOne(String orderId,OrderState nextState,UserEntity user) {
@@ -215,18 +220,5 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
             page = this.lambdaQuery().eq(OrderEntity::getUserId, user.getId()).in(sFunction, val).page(CommonPageRequestUtils.defaultPage());
         }
         return page;
-    }
-
-    public Page<OrderEntity> getMyEvaluateOrder(String loginUserId) {
-        return this.lambdaQuery().eq(OrderEntity::getUserId, loginUserId).
-                eq(OrderEntity::getIsEvaluate, OrderEntity.EVALUATE).
-                page(CommonPageRequestUtils.defaultPage());
-    }
-
-    public Page<OrderEntity> getOrderByType(OrderState type, UserEntity loginUser) {
-        if (Role.ADMIN.equals(loginUser.getRole())) {
-            return this.lambdaQuery().eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
-        }
-        return new Page<>();
     }
 }

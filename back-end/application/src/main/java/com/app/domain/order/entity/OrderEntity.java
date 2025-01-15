@@ -7,7 +7,9 @@ import com.app.domain.product.entity.ProductDetailsEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -40,36 +42,47 @@ public class OrderEntity extends Entity {
 
     //订单状态
     @Schema(description = "订单状态")
+    @JsonView({IGNORE.class})
     private OrderState state;
 
     //下单编号
     @Schema(description = "下单编号")
+    @JsonView({IGNORE.class})
     private String orderNumber;
 
     @Schema(description = "用户ID")
+    @JsonView({IGNORE.class})
     private String userId;
 
     @Schema(description = "收货地址")
+    @JsonView({UPDATE.class})
+    @NotBlank(message = "收货地址不能为空",groups = {UPDATE.class})
     private String deliveryAddress;
 
     @Schema(description = "商品id")
+    @JsonView({IGNORE.class})
     private String productId;
 
     @Schema(description = "本次订单所有的商品信息，防止删除/修改出现问题商品,解决处在订单中的商品需要被冻结问题")
     @TableField(typeHandler = JacksonTypeHandler.class)
+    @JsonView({IGNORE.class})
     private ProductDetailsEntity product;
 
     //是否评价(1 已评价 0 未评价 -1 未购买)
     @Schema(description = "是否评价(1 已评价 0 未评价 -1 表示未处理商品评价 2 已删除 )")
+    @JsonView({IGNORE.class})
     private Integer isEvaluate;
 
     @Schema(description = " 本次订单的商品数量")
+    @JsonView({IGNORE.class})
     private Integer number;
 
     @Schema(description = "总价")
+    @JsonView({IGNORE.class})
     private BigDecimal totalPrice;
 
     @Schema(description = "备注")
+    @JsonView({IGNORE.class})
     private String remark;
 
     public static OrderEntity create(OrderState state,

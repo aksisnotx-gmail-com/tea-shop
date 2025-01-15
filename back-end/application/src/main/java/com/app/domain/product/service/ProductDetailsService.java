@@ -61,22 +61,24 @@ public class ProductDetailsService extends AbstractService<ProductDetailsMapper,
     /**
      *  增加或者扣减库存
      */
-    public synchronized boolean addOrSubStock(int quantity, String productId,boolean isAdd) {
-        if (quantity > 0) {
-            return false;
+    public synchronized ProductDetailsEntity addOrSubStock(int quantity, String productId,boolean isAdd) {
+        if (quantity <= 0) {
+            throw new GlobalException("数量必须大于0");
         }
 
         ProductDetailsEntity entity = this.getById(productId, true);
         if (isAdd) {
             entity.setStock(entity.getStock() + quantity);
-            return this.updateById(entity);
+            this.updateById(entity);
+            return entity;
         }
 
         if (entity.getStock() - quantity < 0) {
-            return false;
+            throw new GlobalException("库存不足");
         }
 
         entity.setStock(entity.getStock() - quantity);
-        return this.updateById(entity);
+        this.updateById(entity);
+        return entity;
     }
 }
