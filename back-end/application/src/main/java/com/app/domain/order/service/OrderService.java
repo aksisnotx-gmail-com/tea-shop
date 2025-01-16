@@ -108,6 +108,12 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
         OrderState refund = OrderState.APPLY_FOR_REFUND;
         OrderEntity one = getOne(orderId, refund,loginUser);
         one.setState(refund);
+        //商品销量加 1
+        ProductDetailsEntity entity = productDetailsService.getById(one.getProductId(), false);
+        if (Objects.nonNull(entity)) {
+            entity.setSalesQuantity(entity.getSalesQuantity() + 1);
+            productDetailsService.updateById(entity);
+        }
         return this.updateById(one);
     }
 
