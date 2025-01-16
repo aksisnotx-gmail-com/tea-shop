@@ -1,10 +1,46 @@
 <script setup>
+import {delSearchHistoryApi, getSearchHistoryApi, searchProductApi} from "@/api/tabbar/my";
+
 const searchVal = ref('')
 const showResult = ref(false) // 控制显示搜索结果还是历史记录
 
 // 搜索历史数据
-const historyList = ref(['花茶', '红茶', '绿茶', '普洱茶'])
-const recentList = ref(['白茶', '乌龙茶'])
+const historyList = ref([])
+const recentList = ref([])
+const getSearchHistory = async ()  => {
+  const res = await getSearchHistoryApi()
+  const { recentSearchHistory, searchHistory } = res.data
+  recentList.value = recentSearchHistory
+  historyList.value = searchHistory
+}
+
+const deleteHistory = async (type) => {
+  const typeMenu = {
+    0: '确定删除历史记录',
+    1: '确定删除最近记录'
+  }
+  uni.showModal({
+    title: '提示',
+    content: typeMenu[type],
+    success: function (res) {
+      if (res.confirm) {
+        delSearchHistoryApi(type).then(res => {
+          if(res.data) {
+            getSearchHistory()
+            return uni.showToast({
+              title: '删除成功',
+              icon: 'success'
+            })
+          }
+          uni.showToast({
+            title: '删除失败',
+            icon: 'fail'
+          })
+        })
+      }
+    }
+  });
+}
 
 // 搜索结果数据
 const searchResults = ref([])
@@ -27,8 +63,9 @@ const switchTab = (index) => {
 }
 
 // 搜索处理
-const onSearch = () => {
-  if (!searchVal.value.trim()) {
+const onSearch = async () => {
+  const val = searchVal.value.toString().trim()
+  if (!val) {
     uni.showToast({
       title: '请输入搜索内容',
       icon: 'none'
@@ -36,7 +73,6 @@ const onSearch = () => {
     return
   }
   showResult.value = true
-  // TODO: 调用搜索API
   loadData()
 }
 
@@ -48,34 +84,49 @@ const onClickActionText = () => {
   }
 }
 
-const onClear = () => {
+const onClear = async () => {
   searchVal.value = ''
   showResult.value = false
+  await getSearchHistory()
 }
 
 // 点击历史记录
 const onClickHistory = (keyword) => {
-  searchVal.value = keyword
+  const val = keyword.toString().trim()
+  if (!val) {
+    uni.showToast({
+      title: '请输入搜索内容',
+      icon: 'none'
+    })
+    return
+  }
+  searchVal.value = val
   showResult.value = true
   loadData()
 }
 
 // 加载搜索结果数据
 const loadData = async () => {
+  const val = searchVal.value.toString().trim()
   loading.value = true
-  // TODO: 这里替换为实际的API调用
-  setTimeout(() => {
-    searchResults.value = Array(10).fill({
-      id: 1,
-      name: '特级大红袍',
-      price: '168.00',
-      originalPrice: '198.00',
-      sales: '1000+',
-      image: '/pagesA/static/blackTea.webp'
-    })
-    loading.value = false
-  }, 1000)
+  const res = await searchProductApi(val)
+  const { records } = res.data
+  searchResults.value = records
+  loading.value = false
 }
+
+async function apiInit ()  {
+  await uni.showLoading({
+    title: '加载中...',
+    mask: true
+  })
+  await getSearchHistory()
+  uni.hideLoading()
+}
+
+onMounted(()   =>  {
+  apiInit()
+})
 </script>
 
 <template>
@@ -97,7 +148,12 @@ const loadData = async () => {
       <view class="history-container">
         <!-- 最近搜索 -->
         <view class="section">
-          <view class="search_title">最近搜索</view>
+          <view class="flex justify-between items-center">
+            <view class="search_title">最近搜索</view>
+            <template v-if="recentList.length">
+              <up-icon name="trash" size="20" @click="deleteHistory(1)"></up-icon>
+            </template>
+          </view>
           <view class="tag-list">
             <text
               v-for="item in recentList"
@@ -110,7 +166,12 @@ const loadData = async () => {
 
         <!-- 历史记录 -->
         <view class="section">
-          <view class="search_title">历史记录</view>
+          <view class="flex justify-between items-center">
+            <view class="search_title">历史记录</view>
+            <template v-if="historyList.length">
+              <up-icon name="trash" size="20" @click="deleteHistory(0)"></up-icon>
+            </template>
+          </view>
           <view class="tag-list">
             <text
               v-for="item in historyList"
@@ -139,42 +200,60 @@ const loadData = async () => {
       </view>
 
       <!-- 修改商品列表布局 -->
-      <scroll-view
-        scroll-y
-        class="result-list"
-        @scrolltolower="loadData"
-      >
-        <view class="goods-grid">
-          <view
-            v-for="item in searchResults"
-            :key="item.id"
-            class="goods-item"
-          >
-            <image
-              :src="item.image"
-              mode="aspectFill"
-              class="goods-image"
-            />
-            <view class="goods-info">
-              <text class="goods-name">{{ item.name }}</text>
-              <view class="goods-price-row">
-                <view class="price-group">
-                  <text class="price-symbol">¥</text>
-                  <text class="price-value">{{ item.price }}</text>
-                  <text class="original-price">¥{{ item.originalPrice }}</text>
-                </view>
-                <view class="cart-btn">
-                  <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
+      <template v-if="!searchResults.length">
+        <u-empty text="暂无商品数据" mode="data"></u-empty>
+      </template>
+      <template v-else>
+        <scroll-view
+            scroll-y
+            class="result-list"
+            @scrolltolower="loadData"
+        >
+          <view class="goods-grid">
+            <view
+                v-for="item in searchResults"
+                :key="item.id"
+                class="goods-item"
+            >
+              <template v-if="!item.carousel.length">
+                <up-image
+                    src="/static/load-error.jpg"
+                    width="100rpx"
+                    height="125rpx"
+                    shape="circle"
+                >
+                </up-image>
+              </template>
+              <template v-else>
+                <image
+                    :src="item.carousel[0]"
+                    mode="aspectFill"
+                    class="goods-image"
+                />
+              </template>
+              <view class="goods-info">
+                <text class="goods-name">{{ item.productName }}</text>
+                <view class="goods-price-row">
+                  <view class="price-group">
+                    <text class="price-symbol">¥</text>
+                    <text class="price-value">{{ item.price }}</text>
+                    <template v-if="item.isSpecial">
+                      <text class="original-price">¥{{ item.specialPrice }}</text>
+                    </template>
+                  </view>
+                  <view class="cart-btn">
+                    <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
+                  </view>
                 </view>
               </view>
             </view>
           </view>
-        </view>
 
-        <!-- 加载状态 -->
-        <view v-if="loading" class="loading-text">正在加载...</view>
-        <view v-if="finished" class="loading-text">没有更多了</view>
-      </scroll-view>
+          <!-- 加载状态 -->
+          <view v-if="loading" class="loading-text">正在加载...</view>
+          <view v-if="finished" class="loading-text">没有更多了</view>
+        </scroll-view>
+      </template>
     </template>
   </view>
 </template>

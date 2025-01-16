@@ -19,13 +19,11 @@
 		list.value = [
 		...records.map(item => ({
 			id: item.id,
-			skuId: item.productMap.SKU.id,
-			img: item.productMap.PRODUCT.carousel[0],
-			name: item.productMap.SKU.attribute.desc,
-			size: item.size,
+			img: item.product.carousel[0],
+			name: item.product.productName,
 			count: item.number,
-			price: item.productMap.SKU.price,
-			sumPrice: item.number * item.productMap.SKU.price,
+			price: item.product.price,
+			sumPrice: item.number * item.product.price,
 		})) ]
 	}
 
@@ -88,7 +86,7 @@
 			return prev
 		}, 0)
 	})
- 
+
 	// 增加商品数量
 	const add = async (item) => {
 		const res = await addOrReduceApi(item.id, 1)
@@ -116,7 +114,7 @@
 			})
 		}
 	}
-	
+
 	// 提交购物车订单
 	const submitOrder = () => {
 		if(!itemGrounpChecked.value.length) {
@@ -140,7 +138,7 @@
 		getAllCar()
 	})
 
-	onReachBottom(async () => {		
+	onReachBottom(async () => {
 		uni.showLoading({
             title: '加载中'
         });
@@ -163,7 +161,7 @@
 	onPullDownRefresh(async () => {
 		const len = list.value.length
 		list.value.splice(0, len)
-		
+
 		uni.showLoading({
             title: '加载中'
         });
@@ -178,7 +176,7 @@
 		<view class="flex justify-end items-center bg-#fff h-14 mb-2.5">
 			<text
 
-				class="bg-#7DA1DC color-#fff px-5 py-2 mr-3 rd-1.5" 
+				class="bg-#7DA1DC color-#fff px-5 py-2 mr-3 rd-1.5"
 				@click="onControl"
 			>{{ modelTitle }}</text>
 		</view>
@@ -198,7 +196,7 @@
 							<!-- 列表的复选框 -->
 							<u-checkbox
 							:name="item.id"
-							shape="circle" 
+							shape="circle"
 							activeColor="#7DA1DC"
 						></u-checkbox>
 						<image :src="item.img" mode="aspectFit" class="img"></image>
@@ -206,9 +204,6 @@
 						<view class="center">
 							<view class="name">
 								{{item.name}}
-							</view>
-							<view class="size">
-								尺寸: {{item.size}}
 							</view>
 							<view class="count">
 								数量: x{{item.count}}
@@ -219,7 +214,7 @@
 							<view class="price">
 								<!-- ￥{{item.price*item.count}}元 -->
 								￥{{item.sumPrice}}元
-								
+
 							</view>
 							<view class="update-count">
 								<view class="reduce" @tap="reduce(item)">
@@ -237,19 +232,19 @@
 				</u-checkbox-group>
 			</template>
 		</view>
-		
+
 		<!-- 底部导航栏 -->
 		<view class="tabbar">
 			<template v-if="modelTitle === '管理'">
 				<view class="all">
 					<u-checkbox-group
-						v-model="isAllChecked" 	
+						v-model="isAllChecked"
 					>
-						<u-checkbox 
+						<u-checkbox
 							name="all"
 							shape="circle"
-							activeColor="#7DA1DC" 
-							label="全选" 
+							activeColor="#7DA1DC"
+							label="全选"
 						></u-checkbox>
 					</u-checkbox-group>
 				</view>
@@ -263,13 +258,13 @@
 			<template v-else>
 				<view class="all">
 					<u-checkbox-group
-						v-model="isAllChecked" 	
+						v-model="isAllChecked"
 					>
-						<u-checkbox 
+						<u-checkbox
 							name="all"
 							shape="circle"
-							activeColor="#7DA1DC" 
-							label="全选" 
+							activeColor="#7DA1DC"
+							label="全选"
 						></u-checkbox>
 					</u-checkbox-group>
 				</view>
@@ -381,7 +376,7 @@
 				}
 			}
 		}
-		
+
 	}
 
 

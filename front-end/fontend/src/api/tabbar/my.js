@@ -112,3 +112,34 @@ export function getByTypeApi (type, id) {
         method: 'get'
     })
 }
+
+/**
+ * @description 获取最近搜索记录
+ */
+export function getSearchHistoryApi () {
+    return service({
+        url: `product/detail/search/history`,
+        method: 'get'
+    })
+}
+
+/**
+ * 根据商品名字搜索商品
+ */
+export function searchProductApi (productName) {
+    return service({
+        url: `product/detail/search?productName=${productName}`,
+        method: 'get'
+    })
+}
+
+/**
+ * 删除搜索记录
+ * @param {number} type type=0删除历史记录，type=1删除最近记录
+ */
+export function delSearchHistoryApi (type) {
+    return service({
+        url: `product/detail/search/history/delete?type=${type}`,
+        method: 'get'
+    })
+}

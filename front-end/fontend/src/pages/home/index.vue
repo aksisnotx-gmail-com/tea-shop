@@ -1,12 +1,13 @@
 <script setup>
-import {
-  getSwiperListApi,
-  getTeaTypeApi,
-  getRecommendProductsApi
-} from '@/api/home'
+  import {
+    getSwiperListApi,
+    getTeaTypeApi,
+    getRecommendProductsApi
+  } from '@/api/home'
     import { useGoodsStore } from '@/store/modules/goods'
     import { useTypeStore } from '@/store/modules/type'
-    import {onPullDownRefresh} from "@dcloudio/uni-app";
+    import { onPullDownRefresh } from "@dcloudio/uni-app";
+  import {addCarApi} from "@/api/tabbar/car";
 
     const onJumpToSearch = () => {
         uni.navigateTo({
@@ -71,6 +72,30 @@ import {
     }
 
     const goodsStore = useGoodsStore()
+    const addCar = async (item) => {
+      const { id } = item
+      try {
+        const res = await addCarApi({ productId: id, number: 1})
+        if(res.data) {
+          uni.showToast({
+            title: '加入购物车成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          uni.showToast({
+            title: '加入购物车失败',
+            icon: 'error',
+            duration: 2000
+          })
+        }
+      } catch (e) {
+        uni.showToast({
+          title: '下单失败',
+          icon: 'error',
+        })
+      }
+    }
     const toDetail = (id) => {
         goodsStore.productId = id
 
@@ -92,6 +117,14 @@ import {
     }
 
     const typeStore = useTypeStore()
+
+    const onJumpToSort = (item) => {
+      typeStore.setTypeId(item.id)
+      uni.switchTab({
+        url: '/pages/tabbar/sort'
+      })
+    }
+
 
    async function apiInit () {
       await getSwiperList()
@@ -146,25 +179,25 @@ import {
         </view>
         <view class="px-4 py-3 flex justify-between flex-wrap">
           <template v-for="item of teaType" :key="item.id">
-            <view class="flex flex-col gap-3 items-center">
-            <template v-if="!item.imgUrl">
-              <up-image
-                  src="/static/load-error.jpg"
-                  width="100rpx"
-                  height="125rpx"
-                  shape="circle"
-              >
-              </up-image>
-            </template>
-            <template v-else>
-              <up-image
-                  :src="item.imgUrl"
-                  width="100rpx"
-                  height="125rpx"
-                  shape="circle"
-              >
-              </up-image>
-            </template>
+            <view class="flex flex-col gap-3 items-center" @click="onJumpToSort(item)">
+              <template v-if="!item.imgUrl">
+                <up-image
+                    src="/static/load-error.jpg"
+                    width="100rpx"
+                    height="125rpx"
+                    shape="circle"
+                >
+                </up-image>
+              </template>
+              <template v-else>
+                <up-image
+                    :src="item.imgUrl"
+                    width="100rpx"
+                    height="125rpx"
+                    shape="circle"
+                >
+                </up-image>
+              </template>
               <text class="text-3.25 color-bluegray">{{ item.type }}</text>
             </view>
           </template>
@@ -220,7 +253,7 @@ import {
                               </view>
                             </template>
                           </view>
-                          <view class="cart-icon">
+                          <view class="cart-icon" @click="addCar(item)">
                             <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
                           </view>
                         </view>

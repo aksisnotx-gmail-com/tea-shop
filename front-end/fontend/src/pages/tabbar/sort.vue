@@ -1,59 +1,40 @@
 <script setup>
+import {getProductTypeApi} from "@/api/home";
+import {getAllProductByTypeApi} from "@/api/tabbar/watch";
+import {useTypeStore} from "@/store/modules/type";
+import {onShow} from "@dcloudio/uni-app";
+
+const typeStore = useTypeStore()
+
 const onSearch = () => {
   uni.navigateTo({
     url: '/pagesA/pages/search/index'
   })
 }
 // 左侧分类菜单数据
-const categories = ref([
-  { id: 1, name: '绿茶' },
-  { id: 2, name: '普洱茶' },
-  { id: 3, name: '红茶' },
-  { id: 4, name: '绿茶' },
-  { id: 5, name: '乌龙茶' },
-  { id: 6, name: '白茶' },
-  { id: 7, name: '花茶' }
-])
+const categories = ref([])
+
+const getCategories = async () => {
+  const res = await getProductTypeApi()
+  if(!res.data?.records.length) return
+  categories.value = res.data.records.map(item => ({ id: item.id, name: item.type }))
+  currentCategoryId.value = categories.value[0].id
+}
 
 // 当前选中的分类
-const currentCategory = ref(0)
+const currentCategoryId = ref(0)
 
 // 商品列表假数据
-const productList = ref([
-  {
-    id: 1,
-    name: '【年份】白茶',
-    image: '/pagesA/static/tea-bg.webp',
-    price: '299.00',
-    originalPrice: '399.00',
-    sales: 1000,
-    desc: '高山云雾茶，清香怡人'
-  },
-  {
-    id: 2,
-    name: '【年份】花茶',
-    image: '/pagesA/static/tea-bg.webp',
-    price: '199.00',
-    originalPrice: '259.00',
-    sales: 800,
-    desc: '花香四溢，回味悠长'
-  },
-  {
-    id: 3,
-    name: '【年份】绿茶',
-    image: '/pagesA/static/tea-bg.webp',
-    price: '159.00',
-    originalPrice: '199.00',
-    sales: 1200,
-    desc: '春茶上市，鲜爽醇厚'
-  }
-])
+const productList = ref([])
 
 // 切换分类
-const switchCategory = (index) => {
-  if (currentCategory.value === index) return
-  currentCategory.value = index
-  // TODO: 加载对应分类的商品数据
+const switchCategoryFlag = ref(false)
+const switchCategory = async (id) => {
+  if (currentCategoryId.value === id && switchCategoryFlag.value) return
+  switchCategoryFlag.value = true
+  currentCategoryId.value = id
+  const res = await getAllProductByTypeApi(id)
+  productList.value = res.data.records
 }
 
 // 跳转到商品详情
@@ -62,6 +43,21 @@ const toDetail = (id) => {
     url: `/pagesA/pages/goodsItem/index?id=${id}`
   })
 }
+
+async function apiInit () {
+  await uni.showLoading({
+    title: '加载中...',
+    mask: true
+  })
+  await getCategories()
+  const firstTypeId = typeStore.typeId ?  typeStore.typeId : currentCategoryId.value
+  await switchCategory(firstTypeId)
+  uni.hideLoading()
+}
+
+onShow(() => {
+  apiInit()
+})
 </script>
 
 <template>
@@ -79,46 +75,73 @@ const toDetail = (id) => {
       <!-- 左侧分类菜单 -->
       <scroll-view scroll-y class="category-menu">
         <view
-          v-for="(item, index) in categories"
+          v-for="item in categories"
           :key="item.id"
           class="category-item"
-          :class="{ 'category-active': currentCategory === index }"
-          @click="switchCategory(index)"
+          :class="{ 'category-active': currentCategoryId === item.id }"
+          @click="switchCategory(item.id)"
         >
           {{ item.name }}
         </view>
       </scroll-view>
 
       <!-- 右侧商品列表 -->
-      <scroll-view scroll-y class="product-list">
-        <view class="product-grid">
-          <view
-            v-for="item in productList"
-            :key="item.id"
-            class="product-item"
-            @click="toDetail(item.id)"
-          >
-            <image
-              :src="item.image"
-              mode="aspectFill"
-              class="product-image"
-            />
-            <view class="product-info">
-              <text class="product-name">{{ item.name }}</text>
-              <text class="product-desc">{{ item.desc }}</text>
-              <view class="product-price-row">
-                <view class="price-group">
-                  <text class="price-symbol">¥</text>
-                  <text class="price-value">{{ item.price }}</text>
-                </view>
-                <view class="cart-btn">
-                  <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
+      <template v-if="!productList.length">
+        <u-empty text="暂无商品数据" mode="data"></u-empty>
+      </template>
+      <template v-else>
+        <scroll-view scroll-y class="product-list">
+          <view class="product-grid">
+            <view
+                v-for="item in productList"
+                :key="item.id"
+                class="product-item"
+                @click="toDetail(item.id)"
+            >
+              <template v-if="!item.carousel.length">
+                <image
+                    src="/static/load-error.jpg"
+                    mode="aspectFill"
+                    class="product-image"
+                />
+              </template>
+              <template v-else>
+                <image
+                    :src="item.carousel[0]"
+                    mode="aspectFill"
+                    class="product-image"
+                />
+              </template>
+              <view class="product-info">
+                <text class="product-name">{{ item.productName }}</text>
+                <view class="product-price-row">
+                  <view class="flex gap-2">
+                    <template v-if="item?.isSpecial">
+                      <view>
+                        <text class="price-symbol">¥</text>
+                        <text class="price-value">{{ item.specialPrice }}</text>
+                      </view>
+                      <view class="line-through text-2.5 fw-500 color-#949494">
+                        <text>¥</text>
+                        <text>{{ item.price }}</text>
+                      </view>
+                    </template>
+                    <template v-else>
+                      <view>
+                        <text class="price-symbol">¥</text>
+                        <text class="price-value">{{ item.price }}</text>
+                      </view>
+                    </template>
+                  </view>
+                  <view class="cart-btn">
+                    <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
+                  </view>
                 </view>
               </view>
             </view>
           </view>
-        </view>
-      </scroll-view>
+        </scroll-view>
+      </template>
     </view>
   </view>
 </template>

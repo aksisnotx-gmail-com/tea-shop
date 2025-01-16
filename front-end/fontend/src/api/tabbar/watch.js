@@ -73,3 +73,13 @@ export function delCommentApi (commentId) {
         method: 'get'
     })
 }
+
+/**
+ * 根据类型获取所有商品
+ */
+export function getAllProductByTypeApi (typeId) {
+    return service({
+        url: `product/detail/type?typeId=${typeId}`,
+        method: 'get'
+    })
+}
