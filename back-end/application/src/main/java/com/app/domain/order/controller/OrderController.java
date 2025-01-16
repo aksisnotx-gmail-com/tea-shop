@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.sdk.resp.RespEntity;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -103,10 +104,12 @@ public class OrderController extends Controller {
         return RespEntity.success(orderService.getWaitEvaluate(LoginUser.getLoginUser()));
     }
 
-    @GetMapping("/getOrderById")
-    @Operation(summary = "获取订单类型获取订单，可以获取待发货、待收货... - [后台 & 小程序]")
-    public RespEntity<Page<OrderEntity>> getOrderByType(@RequestParam OrderState type) {
-        return RespEntity.success(orderService.getOrderByType(type,LoginUser.getLoginUser()));
+    @GetMapping("/search")
+    @Operation(summary = "订单搜索，可以获取待发货、待收货... - [后台 & 小程序]")
+    @Parameter(name = "type",description = "只传 type 能获取【代收货、待发货】& 不能为空")
+    @Parameter(name = "productName",description = "商品名字，有商品名字表示在某个 type 中搜索订单 & 可选")
+    public RespEntity<Page<OrderEntity>> search(@RequestParam OrderState type,@RequestParam(required = false) String productName) {
+        return RespEntity.success(orderService.search(type,LoginUser.getLoginUser(),productName));
     }
 
     @PostMapping("/modify/address")

@@ -33,14 +33,14 @@ public class ProductCommentService extends AbstractService<ProductCommentMapper,
     public Boolean publishComment(ProductCommentEntity param, String loginUserId) {
         OrderEntity entity = orderService.getById(param.getOrderId());
         AssertUtils.assertTrue(orderService.hasOrder(loginUserId,entity.getId()), "未改买的商品无法评论");
-        AssertUtils.assertTrue(entity.getIsEvaluate().equals(OrderEntity.UN_EVALUATE), "该商品已评价/未收货");
+        AssertUtils.assertTrue(entity.getIsEvaluate().equals(OrderEntity.UN_EVALUATE), "该商品已评价过");
         param.setUserId(loginUserId);
         //修改订单为已评价
         entity.setIsEvaluate(OrderEntity.EVALUATE);
         return this.save(param) && orderService.updateById(entity);
     }
 
-    public Page<ProductCommentEntity> queryAllComment(String productId) {
+    public Page<ProductCommentEntity> queryAllCommentByProductId(String productId) {
         //查询订单
         List<OrderEntity> details = orderService.getDetailsByProductId(productId);
         //过滤出已评价的订单
@@ -56,6 +56,10 @@ public class ProductCommentService extends AbstractService<ProductCommentMapper,
         //设置用户
         page.getRecords().forEach(t ->  t.setUser(userService.getById(t.getUserId())));
         return page;
+    }
+
+    public Page<ProductCommentEntity> queryAllComment(UserEntity user) {
+        return Role.ADMIN.equals(user.getRole()) ? this.lambdaQuery().page(CommonPageRequestUtils.defaultPage()) : new Page<>();
     }
 
     public Boolean deleteComment(String commentId, UserEntity loginUser,String orderId) {
