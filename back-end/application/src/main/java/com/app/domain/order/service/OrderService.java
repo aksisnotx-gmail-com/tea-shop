@@ -1,5 +1,6 @@
 package com.app.domain.order.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.app.domain.base.AbstractService;
 import com.app.domain.order.enmus.OrderState;
 import com.app.domain.order.entity.OrderEntity;
@@ -184,11 +185,13 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
                 page(CommonPageRequestUtils.defaultPage());
     }
 
-    public Page<OrderEntity> getOrderByType(OrderState type, UserEntity loginUser) {
+    public Page<OrderEntity> search(OrderState type, UserEntity loginUser, String productName) {
         if (Role.ADMIN.equals(loginUser.getRole())) {
-            return this.lambdaQuery().eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
+            return StrUtil.isBlank(productName) ? this.lambdaQuery().eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage()) :
+                    this.lambdaQuery().like(OrderEntity::getProduct, productName).eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
         }
-        return this.lambdaQuery().eq(OrderEntity::getUserId, loginUser.getId()).eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
+        return StrUtil.isBlank(productName) ? this.lambdaQuery().eq(OrderEntity::getUserId, loginUser.getId()).eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage()) :
+                this.lambdaQuery().like(OrderEntity::getProduct, productName).eq(OrderEntity::getUserId, loginUser.getId()).eq(OrderEntity::getState, type).page(CommonPageRequestUtils.defaultPage());
     }
 
     public Boolean modifyOrderAddress(OrderEntity order) {
