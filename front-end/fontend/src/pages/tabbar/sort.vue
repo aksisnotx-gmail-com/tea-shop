@@ -3,6 +3,7 @@ import {getProductTypeApi} from "@/api/home";
 import {getAllProductByTypeApi} from "@/api/tabbar/watch";
 import {useTypeStore} from "@/store/modules/type";
 import {onShow} from "@dcloudio/uni-app";
+import {addCarApi} from "@/api/tabbar/car";
 
 const typeStore = useTypeStore()
 
@@ -35,6 +36,31 @@ const switchCategory = async (id) => {
   currentCategoryId.value = id
   const res = await getAllProductByTypeApi(id)
   productList.value = res.data.records
+}
+
+const addCar = async (item) => {
+  const { id } = item
+  try {
+    const res = await addCarApi({ productId: id, number: 1})
+    if(res.data) {
+      uni.showToast({
+        title: '加入购物车成功',
+        icon: 'success',
+        duration: 2000
+      })
+    } else {
+      uni.showToast({
+        title: '加入购物车失败',
+        icon: 'error',
+        duration: 2000
+      })
+    }
+  } catch (e) {
+    uni.showToast({
+      title: '下单失败',
+      icon: 'error',
+    })
+  }
 }
 
 // 跳转到商品详情
@@ -133,7 +159,7 @@ onShow(() => {
                       </view>
                     </template>
                   </view>
-                  <view class="cart-btn">
+                  <view class="cart-btn" @click.stop="addCar(item)">
                     <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
                   </view>
                 </view>

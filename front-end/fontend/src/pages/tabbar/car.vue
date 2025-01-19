@@ -1,6 +1,7 @@
 <script setup>
 	import { useCarStore } from '@/store/modules/car'
 	import { getAllApi, addOrReduceApi } from '@/api/tabbar/car'
+  import {onShow} from "@dcloudio/uni-app";
 
 	const carStore = useCarStore()
 	const pageInfo = reactive({
@@ -13,6 +14,7 @@
 	const getAllCar = async (currentt = 1) => {
 		const res = await getAllApi(currentt)
 		const { records, total, size, current } = res.data
+    console.log("=>(car.vue:16) records", records);
 		pageInfo.current = current
 		pageInfo.size = size
 		pageInfo.total = total
@@ -23,6 +25,7 @@
 			name: item.product.productName,
 			count: item.number,
 			price: item.product.price,
+      productId: item.product.id,
 			sumPrice: item.number * item.product.price,
 		})) ]
 	}
@@ -134,7 +137,7 @@
 		})
 	}
 
-	onMounted(() => {
+	onShow(() => {
 		getAllCar()
 	})
 
@@ -181,7 +184,7 @@
 			>{{ modelTitle }}</text>
 		</view>
 
-		<view class="px-2">
+		<view class="px-2 overflow-hidden">
 			<template v-if="!list.length">
 				<u-empty
 					mode="car"
@@ -190,46 +193,62 @@
 				</u-empty>
 			</template>
 			<template v-else>
-				<u-checkbox-group v-model="itemGrounpChecked" @change="handleCheck">
-					<view class="list" v-for="item in list" :key='item.id'>
-						<view class="l">
-							<!-- 列表的复选框 -->
-							<u-checkbox
-							:name="item.id"
-							shape="circle"
-							activeColor="#7DA1DC"
-						></u-checkbox>
-						<image :src="item.img" mode="aspectFit" class="img"></image>
-						</view>
-						<view class="center">
-							<view class="name">
-								{{item.name}}
+				<scroll-view scroll-y="true" style="height: calc(100vh - 360rpx);">
+					<u-checkbox-group v-model="itemGrounpChecked" @change="handleCheck" style="overflow-y: auto">
+						<view class="list" v-for="item in list" :key='item.id'>
+							<view class="l">
+								<!-- 列表的复选框 -->
+								<u-checkbox
+								:name="item.id"
+								shape="circle"
+								activeColor="#7DA1DC"
+							></u-checkbox>
+                <template v-if="!item.img">
+                  <image
+                      src="/static/load-error.jpg"
+                      mode="aspectFill"
+                      class="img"
+                  />
+                </template>
+                <template v-else>
+                  <image
+                      :src="item.img"
+                      mode="aspectFill"
+                      class="img"
+                  />
+                </template>
+<!--							<image :src="item.img" mode="aspectFit" class="img"></image>-->
 							</view>
-							<view class="count">
-								数量: x{{item.count}}
+							<view class="center">
+								<view class="name">
+									{{item.name}}
+								</view>
+								<view class="count">
+									数量: x{{item.count}}
+								</view>
 							</view>
-						</view>
-						<view class="r">
-							<!-- 商品小计 -->
-							<view class="price">
-								<!-- ￥{{item.price*item.count}}元 -->
-								￥{{item.sumPrice}}元
+							<view class="r">
+								<!-- 商品小计 -->
+								<view class="price">
+									<!-- ￥{{item.price*item.count}}元 -->
+									￥{{item.sumPrice}}元
 
-							</view>
-							<view class="update-count">
-								<view class="reduce" @tap="reduce(item)">
-								-
 								</view>
-								<view class="cart-count">
-									{{item.count}}
-								</view>
-								<view class="add" @tap="add(item)">
-									+
+								<view class="update-count">
+									<view class="reduce" @tap="reduce(item)">
+									-
+									</view>
+									<view class="cart-count">
+										{{item.count}}
+									</view>
+									<view class="add" @tap="add(item)">
+										+
+									</view>
 								</view>
 							</view>
 						</view>
-					</view>
-				</u-checkbox-group>
+					</u-checkbox-group>
+				</scroll-view>
 			</template>
 		</view>
 
@@ -279,7 +298,7 @@
 <style lang="scss" scoped>
 	.cart {
 		height: 100vh;
-		background: #EEEEEE;
+		background-color: #EEEEEE;
 	}
 
 	// 居中显示
@@ -293,7 +312,6 @@
 		height: 208rpx;
 		background: #fff;
 		box-shadow: 0 8rpx 16rpx 0 rgba(83,66,49,0.08);
-		border-radius: 24rpx;
 		border-radius: 24rpx;
 		display: flex;
 		justify-content: space-around;

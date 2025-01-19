@@ -31,7 +31,7 @@ export const useGoodsStore = defineStore('goods', {
           if(!id) return
 
           const res = await getProductByIdApi(id)
-          const { 
+          const {
             carousel,
             productName,
             deliveryAddress,
@@ -56,7 +56,7 @@ export const useGoodsStore = defineStore('goods', {
 
 /**
  * @description 计算价格区间
- * @param {Array} specCombinationList 
+ * @param {Array} specCombinationList
  */
 function calculatePriceRange(specCombinationList) {
   if (!Array.isArray(specCombinationList) || !specCombinationList.length) return
@@ -70,14 +70,14 @@ function calculatePriceRange(specCombinationList) {
     // 返回价格区间，即最低价格和最高价格
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    
+
     return maxPrice == minPrice ? minPrice : `${minPrice} - ${maxPrice}`;
   }
 }
 
 /**
  * @description 获取数组中不重复的元素
- * @param {Array[Array]} twoDimensionalArray 
+ * @param {Array[Array]} twoDimensionalArray
  * @returns {Array}
  */
 function getUniqueFlatArray(twoDimensionalArray) {
@@ -93,28 +93,28 @@ function getUniqueFlatArray(twoDimensionalArray) {
 
 /**
  * @description 获取商品信息
- * @param {Array} productList 
- * @returns 
+ * @param {Array} productList
+ * @returns
  */
 function getStyleList (productList) {
   if(!productList.length) return
 
-  return productList.map(item => 
-    ({ 
-      value: item.desc, 
+  return productList.map(item =>
+    ({
+      value: item.desc,
       img: item.carouselUrl,
       price: item.price,
       stock: item.stock,
       productSkuId: item.id,
-      isActive: false, 
-      isDisabled: false 
+      isActive: false,
+      isDisabled: false
     }))
 }
 
 /**
  * @description 将规格组合转换为skuData格式
- * @param {Array} specCombinationList 
- * @returns 
+ * @param {Array} specCombinationList
+ * @returns
  */
 function transformSpecCombinationToList(specCombinationList) {
   if(!Array.isArray(specCombinationList) || !specCombinationList.length) return

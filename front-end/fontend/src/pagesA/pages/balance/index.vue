@@ -21,19 +21,17 @@
         carStore.goodsList.forEach((item) => {
             const {
                 id,
-                skuId,
+                productId,
                 count,
-                sumPrice,
-                size
+                sumPrice
             } = item
 
             const params = {
+                productId: productId,
                 deliveryAddress: addressJson,
-                skuId,
                 number: count,
                 totalPrice: sumPrice,
-                size
-            }    
+            }
             orderParams.push(params)
             carIdList.push(id)
         })
@@ -120,7 +118,7 @@
     const address = ref({})
     onShow(() => {
         address.value = { ...addressStore.curAddress }
-    }) 
+    })
 </script>
 
 <template>
@@ -145,9 +143,9 @@
                         </view>
                     </view>
                     <view class="absolute right-0 top-26%">
-                        <u-icon 
-                        name="arrow-right" 
-                        color="#FC7DA6" 
+                        <u-icon
+                        name="arrow-right"
+                        color="#FC7DA6"
                         size="28"
                         ></u-icon>
                     </view>
@@ -156,17 +154,17 @@
             <template v-else>
                 <view class="layout-abs-center py-3 px-2">
                     <view class="layout-items-center gap-3">
-                        <u-icon 
-                            name="edit-pen" 
-                            color="#FC7DA6" 
+                        <u-icon
+                            name="edit-pen"
+                            color="#FC7DA6"
                             size="28"
                         ></u-icon>
                         <text class="text-3 color-#666">添加收货地址</text>
                     </view>
                     <view class="absolute right-0 top-22.5%">
-                        <u-icon 
-                        name="arrow-right" 
-                        color="#FC7DA6" 
+                        <u-icon
+                        name="arrow-right"
+                        color="#FC7DA6"
                         size="28"
                         ></u-icon>
                     </view>

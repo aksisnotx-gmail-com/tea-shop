@@ -1,8 +1,9 @@
 <script setup>
-    import { getWaitPayApi } from '@/api/tabbar/my'
+    import {getOrderByStatusApi, ORDER_STATUS} from '@/api/tabbar/my'
     import { orderCloseApi, orderPayApi } from '@/api/tabbar/order'
 
     import { JumpDetail } from '../utils/index'
+
 
     const pageInfo = reactive({
         current: 1,
@@ -12,7 +13,8 @@
 
     const orderList = ref([])
     const getWaitPay = async (currentt = 1) => {
-        const res = await getWaitPayApi(currentt)
+        // const res = await getWaitPayApi(currentt)
+        const res = await getOrderByStatusApi(ORDER_STATUS.PLACE_ORDER, currentt)
         const { records, total, size, current } = res.data
         pageInfo.total = total
         pageInfo.size = size
@@ -85,25 +87,25 @@
         return ORDER_STATE[state] ? ORDER_STATE[state].front : ''
     }
 
-    onReachBottom(async () => {		
-		uni.showLoading({
-            title: '加载中'
-        });
-		const currentTotal = pageInfo.current * pageInfo.size
-		if(currentTotal < pageInfo.total) {
-            pageInfo.current++
-            await getWaitPay(pageInfo.current)
-            uni.hideLoading()
-        } else {
-            uni.hideLoading()
-            uni.showToast({
-                title: '没有更多了',
-                icon: 'error',
-                mask: true,
-                duration: 1000
-            })
-        }
-	})
+    onReachBottom(async () => {
+      uni.showLoading({
+        title: '加载中'
+      });
+      const currentTotal = pageInfo.current * pageInfo.size
+      if(currentTotal < pageInfo.total) {
+              pageInfo.current++
+              await getWaitPay(pageInfo.current)
+              uni.hideLoading()
+          } else {
+              uni.hideLoading()
+              uni.showToast({
+                  title: '没有更多了',
+                  icon: 'error',
+                  mask: true,
+                  duration: 1000
+              })
+          }
+    })
 
     onPullDownRefresh(async () => {
         const len = orderList.value.length
@@ -132,21 +134,30 @@
         <template v-else>
             <template v-for="item of orderList" :key="item.id">
                 <view class="item_card">
-                    <view 
+                    <view
                         class="flex gap-4"
                         @click="JumpDetail(item.id)"
                     >
-                        <image
-                            :src="item.productSku.attribute.carouselUrl"
-                            mode="aspectFill"
-                            class="img"
-                        />
+                        <template v-if="!item.product.carousel.length">
+                          <image
+                              src="/static/load-error.jpg"
+                              mode="aspectFill"
+                              class="img"
+                          />
+                        </template>
+                        <template v-else>
+                          <image
+                              :src="item.product.carousel[0]"
+                              mode="aspectFill"
+                              class="img"
+                          />
+                        </template>
                         <view class="w-60 flex flex-col justify-between">
-                            <text class="name">{{ item.productDetail.productName }}</text>
+                            <text class="name">{{ item.product.productName }}</text>
                             <view class="flex items-center gap-3 text-3 color-#666">
-                                <text>{{ item.productSku.attribute.desc }}</text>
-                                <text>{{ item.size }}</text>
-                                <text class="font-600">x {{ item.skuNumber }}</text>
+<!--                                <text>{{ item.productSku.attribute.desc }}</text>-->
+<!--                                <text>{{ item.size }}</text>-->
+                                <text class="font-600">x {{ item.number }}</text>
                             </view>
                             <view class="layout-slide">
                                 <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
@@ -156,15 +167,15 @@
                     </view>
                     <view class="mt-3 pt-2 flex flex-col items-end gap-3 border_t">
                         <view class="flex gap-3">
-                            <text class="text-3.5">共{{ item.skuNumber }}件商品, 买家实付</text>
+                            <text class="text-3.5">共{{ item.number }}件商品, 买家实付</text>
                             <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
                         </view>
                         <view class="text-3 flex gap-5">
-                            <text 
-                                class="border_xy py-1 px-1.5" 
+                            <text
+                                class="border_xy py-1 px-1.5"
                                 @click="closeOrder(item.id)"
                             >关闭订单</text>
-                            <text 
+                            <text
                                 class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                 @click="onPay(item.id)"
                             >立即付款</text>

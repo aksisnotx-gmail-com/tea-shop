@@ -83,7 +83,7 @@
         matrix.value[i] = new Array(len).fill(0);
       }
     }
-    
+
     // 根据 skuList 和 properties 设置邻接矩阵的值
     const setAdjMatrixValue = () => {
       skuList.value.forEach((sku) => {
@@ -169,7 +169,7 @@
         return
       }
       infoShow.value = false
-      
+
     }
 
     const addCar = async () => {
@@ -219,7 +219,7 @@
 
       uni.navigateTo({
         url: '/pagesA/pages/address/receiving'
-      })      
+      })
     }
 
     const productId = goodsStore.productId
@@ -235,7 +235,7 @@
       init()
 
       proCommentStore.getCommentListById(goodsStore.productId)
-    }) 
+    })
 
     onLoad(() => {
       setPropertiesList()
@@ -303,7 +303,7 @@
                 indicatorActiveColor="#E4697B"
                 indicatorMode="dot"
                 :displayMultipleItems="0"
-            ></u-swiper> 
+            ></u-swiper>
         </view>
         <view class="bg-#fff p-4">
             <view class="flex flex-col">
@@ -314,14 +314,14 @@
                 lineColor="#ccc"
             ></u-divider>
             <view class="color-#999">
-                <view class="mb-3 layout-slide" @click="chooisGoods">
-                    <text class="mr-4 color-#000">选择</text>
-                    <view class="flex-1">
-                        <text>颜色: </text>
-                        <text>尺码</text>
-                    </view>
-                    <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>
-                </view>
+<!--                <view class="mb-3 layout-slide" @click="chooisGoods">-->
+<!--                    <text class="mr-4 color-#000">选择</text>-->
+<!--                    <view class="flex-1">-->
+<!--                        <text>颜色: </text>-->
+<!--                        <text>尺码</text>-->
+<!--                    </view>-->
+<!--                    <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>-->
+<!--                </view>-->
                 <view class="mb-3">
                     <text class="mr-4 color-#000">发货</text>
                     <text>快递: </text>
@@ -354,76 +354,76 @@
               </template>
             </view>
         </view>
-        <view class="bg-#fff p-4 ">
-            <view class="layout-slide" @click="JumpComment">
-                <text class="mr-4 color-#000 font-600">商品评论</text>
-                <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>
-            </view>
+<!--        <view class="bg-#fff p-4 ">-->
+<!--            <view class="layout-slide" @click="JumpComment">-->
+<!--                <text class="mr-4 color-#000 font-600">商品评论</text>-->
+<!--                <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>-->
+<!--            </view>-->
 
-            <view class="mt-3 pb-3">
-              <template v-if="!Object.keys(oneComment).length">
-                <u-empty
-                    mode="data"
-                    text="暂无评论"
-                >
-                </u-empty>
-              </template>
-              <template v-else>
-                <view class="flex gap-5 max-h-42 overflow-hidden">
-                    <up-avatar 
-                        :src="oneComment.user.avatar"
-                        shape="circle"
-                    ></up-avatar>
-                    <view class="flex flex-col items-start">
-                        <view class="w-70 flex justify-between">
-                            <text class="text-3 color-#999">{{ oneComment.user.nickname }}</text>
-                            <text class="text-3 color-#999">{{ oneComment.createTime }}</text>
-                        </view>
-                        <view class="my-1">
-                            <u-rate
-                                :modelValue="oneComment.starRating"
-                            ></u-rate>
-                        </view>
-                          
-                        <view class="ellipsis">
-                          <text>{{ oneComment.commentContent }}</text>
-                          <!-- <template v-if="oneComment.commentImgUrl">
-                            <template v-for="url of oneComment.commentImgUrl" :key="url">
-                              <image
-                                  class="w-25 h-20"
-                                  :src="url"
-                                  mode="aspectFit"
-                              />
-                            </template>
-                          </template> -->
-                        </view>
-                    </view>
-                </view>
-              </template>
-            </view>
-              
-        </view>
+<!--            <view class="mt-3 pb-3">-->
+<!--              <template v-if="!Object.keys(oneComment).length">-->
+<!--                <u-empty-->
+<!--                    mode="data"-->
+<!--                    text="暂无评论"-->
+<!--                >-->
+<!--                </u-empty>-->
+<!--              </template>-->
+<!--              <template v-else>-->
+<!--                <view class="flex gap-5 max-h-42 overflow-hidden">-->
+<!--                    <up-avatar-->
+<!--                        :src="oneComment.user.avatar"-->
+<!--                        shape="circle"-->
+<!--                    ></up-avatar>-->
+<!--                    <view class="flex flex-col items-start">-->
+<!--                        <view class="w-70 flex justify-between">-->
+<!--                            <text class="text-3 color-#999">{{ oneComment.user.nickname }}</text>-->
+<!--                            <text class="text-3 color-#999">{{ oneComment.createTime }}</text>-->
+<!--                        </view>-->
+<!--                        <view class="my-1">-->
+<!--                            <u-rate-->
+<!--                                :modelValue="oneComment.starRating"-->
+<!--                            ></u-rate>-->
+<!--                        </view>-->
+
+<!--                        <view class="ellipsis">-->
+<!--                          <text>{{ oneComment.commentContent }}</text>-->
+<!--                          &lt;!&ndash; <template v-if="oneComment.commentImgUrl">-->
+<!--                            <template v-for="url of oneComment.commentImgUrl" :key="url">-->
+<!--                              <image-->
+<!--                                  class="w-25 h-20"-->
+<!--                                  :src="url"-->
+<!--                                  mode="aspectFit"-->
+<!--                              />-->
+<!--                            </template>-->
+<!--                          </template> &ndash;&gt;-->
+<!--                        </view>-->
+<!--                    </view>-->
+<!--                </view>-->
+<!--              </template>-->
+<!--            </view>-->
+
+<!--        </view>-->
 
         <view class="w-100vw bg-#fff flex mb-5">
-          <text 
+          <text
             class="flex-1 flex justify-center bg-#82A4D7 py-5 rd_l color-#fff font-600"
             @click="addCar"
           >
             加入购物车
           </text>
-          <text 
+          <text
             class="flex-1 flex justify-center bg-#5C90DF py-5 rd_r color-#fff font-600"
             @click="onBuy"
           >
             立即购买
           </text>
         </view>
-          
-        <u-popup 
+
+        <u-popup
             :show="infoShow"
             closeable
             round="10"
-            @close="close" 
+            @close="close"
             @open="open"
         >
 
@@ -438,8 +438,8 @@
                             <text>{{ selected[0]?.value }}, </text>
                             <text>{{ selected[1]?.value }}</text>
                         </view>
-                        <!-- <text 
-                          class="color-#999" 
+                        <!-- <text
+                          class="color-#999"
                           v-if="selected[1]?.stock"
                         >库存: {{ selected[1]?.stock }}</text> -->
                     </view>
@@ -447,9 +447,9 @@
                 </template>
               <template v-else>
                 <view class="thumb-box">
-                      <image 
-                        class="item-menu-image" 
-                        :src="swiperList[0]" 
+                      <image
+                        class="item-menu-image"
+                        :src="swiperList[0]"
                         mode="aspectFit"
                       ></image>
                       <view class="ml-3 h-25 flex flex-col justify-around font-600">
@@ -494,7 +494,7 @@
                 <text>购买数量</text>
                 <u-number-box integer v-model="countd"></u-number-box>
               </view>
-              <view 
+              <view
                 class="layout-center bg-#7DA1DC color-#fff py-3 rd-2"
                 @click="confirmSelected"
               >确认</view>
@@ -543,7 +543,7 @@
     }
 
     .attribute_img {
-      width: 98px; 
+      width: 98px;
       height: 80px;
     }
 
