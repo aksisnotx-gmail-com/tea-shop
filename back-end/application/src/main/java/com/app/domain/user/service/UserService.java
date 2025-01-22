@@ -73,6 +73,7 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
 
     public Boolean modifyUserPassword(UserEntity param) {
         UserEntity user = getUserByPhoneNumber(param.getPhoneNumber());
+        AssertUtils.notNull(user, "用户不存在");
         AssertUtils.assertTrue(Role.BUYER.equals(user.getRole()), "操作异常");
         user.setPwd(MD5Utils.encrypt(param.getPwd()));
         //移除 TOKEN
