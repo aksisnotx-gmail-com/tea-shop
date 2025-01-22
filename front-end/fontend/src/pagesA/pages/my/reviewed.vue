@@ -92,6 +92,7 @@
                     <text @click="delEvaluate(item.comment.id, item.order.id)">删除</text>
                 </view>
                 <view class="color-#666 flex flex-col">
+                    <up-rate :value="item.comment.starRating" readonly></up-rate>
                     <text class="comment">{{ item.comment.commentContent }}</text>
                     <view class="flex gap-2 flex-wrap">
                         <template v-if="item.comment.commentImgUrl">

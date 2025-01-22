@@ -5,12 +5,14 @@
 
     import { addCarApi } from '@/api/tabbar/car'
     import { createOrderApi, orderPayApi } from '@/api/tabbar/order'
+    import {onLoad} from "@dcloudio/uni-app";
 
     const goodsStore = useGoodsStore()
     const addressStore = useAddressStore()
     const proCommentStore = useProCommentStore()
 
-    const { productInfo, propertiesList, skuData } = storeToRefs(goodsStore)
+    // const { productInfo, propertiesList, skuData } = storeToRefs(goodsStore)
+    const { productId, productInfo } = storeToRefs(goodsStore)
     const { setPropertiesList } = goodsStore
 
     const { oneComment } = storeToRefs(proCommentStore)
@@ -172,69 +174,93 @@
 
     }
 
+    // const addCar = async () => {
+    //   if(!Array.isArray(selected.value) || selected.value.length !== 2) {
+    //     uni.showToast({
+    //       title: '请选择商品属性',
+    //       icon: 'none',
+    //       duration: 3000
+    //     })
+    //     return
+    //   }
+    //
+    //   const size = selected.value[0].value
+    //   const id = selected.value[1].productSkuId
+    //   const number = countd.value
+    //   const objParams = {
+    //     productSkuId: id,
+    //     size,
+    //     number
+    //   }
+    //   const res = await addCarApi(objParams)
+    //   if(res.data) {
+    //     uni.showToast({
+    //       title: '加入购物车成功',
+    //       icon: 'success',
+    //       duration: 3000
+    //     })
+    //   } else {
+    //     uni.showToast({
+    //       title: res.message,
+    //       icon: 'error',
+    //       duration: 3000
+    //     })
+    //   }
+    //
+    // }
+
     const addCar = async () => {
-      if(!Array.isArray(selected.value) || selected.value.length !== 2) {
+      try {
+        const res = await addCarApi({ productId: productId.value, number: 1})
+        if(res.data) {
+          uni.showToast({
+            title: '加入购物车成功',
+            icon: 'success',
+            duration: 2000
+          })
+        } else {
+          uni.showToast({
+            title: '加入购物车失败',
+            icon: 'error',
+            duration: 2000
+          })
+        }
+      } catch (e) {
         uni.showToast({
-          title: '请选择商品属性',
-          icon: 'none',
-          duration: 3000
-        })
-        return
-      }
-
-      const size = selected.value[0].value
-      const id = selected.value[1].productSkuId
-      const number = countd.value
-      const objParams = {
-        productSkuId: id,
-        size,
-        number
-      }
-      const res = await addCarApi(objParams)
-      if(res.data) {
-        uni.showToast({
-          title: '加入购物车成功',
-          icon: 'success',
-          duration: 3000
-        })
-      } else {
-        uni.showToast({
-          title: res.message,
+          title: '下单失败',
           icon: 'error',
-          duration: 3000
         })
       }
-
     }
 
+
     const onBuy = async () => {
-      if(!Array.isArray(selected.value) || selected.value.length !== 2) {
-        uni.showToast({
-          title: '请选择商品属性',
-          icon: 'none',
-          duration: 3000
-        })
-        return
-      }
+      // if(!Array.isArray(selected.value) || selected.value.length !== 2) {
+      //   uni.showToast({
+      //     title: '请选择商品属性',
+      //     icon: 'none',
+      //     duration: 3000
+      //   })
+      //   return
+      // }
 
       uni.navigateTo({
         url: '/pagesA/pages/address/receiving'
       })
     }
 
-    const productId = goodsStore.productId
     const JumpComment = () => {
         uni.navigateTo({
-            url: `/pagesA/pages/comment/index?productId=${productId}`
+            url: `/pagesA/pages/comment/index?productId=${productId.value}`
         })
     }
 
     onMounted(() => {
       initInfo()
 
-      init()
+      // init()
 
-      proCommentStore.getCommentListById(goodsStore.productId)
+      proCommentStore.getCommentListById(productId.value)
     })
 
     onLoad(() => {
@@ -307,8 +333,26 @@
         </view>
         <view class="bg-#fff p-4">
             <view class="flex flex-col">
-                <text class="color-#DC143C font-600">¥ {{ productInfo.priceRange }}</text>
-                <text class="mt-3">{{ productInfo.productName }}</text>
+              <view class="flex items-center gap-2">
+                <template v-if="productInfo?.isSpecial">
+                  <view>
+                    <text class="price-symbol">¥</text>
+                    <text class="price-value">{{ productInfo.specialPrice }}</text>
+                  </view>
+                  <view class="line-through text-2.5 fw-500 color-#949494">
+                    <text>¥</text>
+                    <text>{{ productInfo.price }}</text>
+                  </view>
+                </template>
+                <template v-else>
+                  <view>
+                    <text class="price-symbol">¥</text>
+                    <text class="price-value">{{ productInfo.price }}</text>
+                  </view>
+                </template>
+              </view>
+<!--                <text class="color-#DC143C font-600">¥ {{ productInfo.priceRange }}</text>-->
+<!--                <text class="mt-3">{{ productInfo.productName }}</text>-->
             </view>
             <u-divider
                 lineColor="#ccc"
@@ -322,101 +366,109 @@
 <!--                    </view>-->
 <!--                    <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>-->
 <!--                </view>-->
+                <view class="mb-3 flex">
+                    <text class="mr-4 color-#000">默认：</text>
+                    <view>
+                        <text>默认</text>
+                    </view>
+                </view>
                 <view class="mb-3">
-                    <text class="mr-4 color-#000">发货</text>
+                    <text class="mr-4 color-#000">发货: </text>
                     <text>快递: </text>
                     <text>从{{ productInfo.deliveryAddress}}发货 , 包邮</text>
                 </view>
                 <view>
-                    <text class="color-#000">服务</text>
+                    <text class="color-#000">服务: </text>
                     <text class="mx-4">正品保证</text>
                     <text>七天无理由</text>
                 </view>
             </view>
         </view>
-        <view class="bg-#fff p-4 my-3">
-            <u-divider textSize="18" text="商品描述" dashed :hairline="false"></u-divider>
-            <view class="mt-4 flex flex-col items-center">
-              <template v-if="!productInfo.descUrls.length">
-                <u-empty
-                  mode="data"
-                >
-                </u-empty>
-              </template>
-              <template v-else>
-                <template v-for="(item, index) of productInfo.descUrls" :key="index">
-                  <image
-                      :src="item"
-                      mode="widthFix"
-                      class="vertical-bottom"
-                  />
-                </template>
-              </template>
-            </view>
-        </view>
-<!--        <view class="bg-#fff p-4 ">-->
-<!--            <view class="layout-slide" @click="JumpComment">-->
-<!--                <text class="mr-4 color-#000 font-600">商品评论</text>-->
-<!--                <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>-->
-<!--            </view>-->
-
-<!--            <view class="mt-3 pb-3">-->
-<!--              <template v-if="!Object.keys(oneComment).length">-->
+<!--        <view class="bg-#fff p-4 my-3">-->
+<!--            <u-divider textSize="18" text="商品描述" dashed :hairline="false"></u-divider>-->
+<!--            <view class="mt-4 flex flex-col items-center">-->
+<!--              <template v-if="!productInfo.descUrls.length">-->
 <!--                <u-empty-->
-<!--                    mode="data"-->
-<!--                    text="暂无评论"-->
+<!--                  mode="data"-->
 <!--                >-->
 <!--                </u-empty>-->
 <!--              </template>-->
 <!--              <template v-else>-->
-<!--                <view class="flex gap-5 max-h-42 overflow-hidden">-->
-<!--                    <up-avatar-->
-<!--                        :src="oneComment.user.avatar"-->
-<!--                        shape="circle"-->
-<!--                    ></up-avatar>-->
-<!--                    <view class="flex flex-col items-start">-->
-<!--                        <view class="w-70 flex justify-between">-->
-<!--                            <text class="text-3 color-#999">{{ oneComment.user.nickname }}</text>-->
-<!--                            <text class="text-3 color-#999">{{ oneComment.createTime }}</text>-->
-<!--                        </view>-->
-<!--                        <view class="my-1">-->
-<!--                            <u-rate-->
-<!--                                :modelValue="oneComment.starRating"-->
-<!--                            ></u-rate>-->
-<!--                        </view>-->
-
-<!--                        <view class="ellipsis">-->
-<!--                          <text>{{ oneComment.commentContent }}</text>-->
-<!--                          &lt;!&ndash; <template v-if="oneComment.commentImgUrl">-->
-<!--                            <template v-for="url of oneComment.commentImgUrl" :key="url">-->
-<!--                              <image-->
-<!--                                  class="w-25 h-20"-->
-<!--                                  :src="url"-->
-<!--                                  mode="aspectFit"-->
-<!--                              />-->
-<!--                            </template>-->
-<!--                          </template> &ndash;&gt;-->
-<!--                        </view>-->
-<!--                    </view>-->
-<!--                </view>-->
+<!--                <template v-for="(item, index) of productInfo.descUrls" :key="index">-->
+<!--                  <image-->
+<!--                      :src="item"-->
+<!--                      mode="widthFix"-->
+<!--                      class="vertical-bottom"-->
+<!--                  />-->
+<!--                </template>-->
 <!--              </template>-->
 <!--            </view>-->
-
 <!--        </view>-->
+        <view class="bg-#fff p-4 ">
+            <view class="layout-slide" @click="JumpComment">
+                <text class="mr-4 color-#000 font-600">商品评论</text>
+                <u-icon name="arrow-right" color="#2979ff" size="18"></u-icon>
+            </view>
 
-        <view class="w-100vw bg-#fff flex mb-5">
-          <text
-            class="flex-1 flex justify-center bg-#82A4D7 py-5 rd_l color-#fff font-600"
-            @click="addCar"
-          >
-            加入购物车
-          </text>
-          <text
-            class="flex-1 flex justify-center bg-#5C90DF py-5 rd_r color-#fff font-600"
-            @click="onBuy"
-          >
-            立即购买
-          </text>
+            <view class="mt-3 pb-3">
+              <template v-if="!Object.keys(oneComment).length">
+                <u-empty
+                    mode="data"
+                    text="暂无评论"
+                >
+                </u-empty>
+              </template>
+              <template v-else>
+                <view class="flex gap-5 max-h-42 overflow-hidden">
+                    <up-avatar
+                        :src="oneComment.user.avatar"
+                        shape="circle"
+                    ></up-avatar>
+                    <view class="flex flex-col items-start">
+                        <view class="w-70 flex justify-between">
+                            <text class="text-3 color-#999">{{ oneComment.user.nickname }}</text>
+                            <text class="text-3 color-#999">{{ oneComment.createTime }}</text>
+                        </view>
+                        <view class="my-1">
+                            <u-rate
+                                :modelValue="oneComment.starRating"
+                            ></u-rate>
+                        </view>
+
+                        <view class="ellipsis">
+                          <text>{{ oneComment.commentContent }}</text>
+                          <template v-if="oneComment.commentImgUrl">
+                            <template v-for="url of oneComment.commentImgUrl" :key="url">
+                              <image
+                                  class="w-25 h-20"
+                                  :src="url"
+                                  mode="aspectFit"
+                              />
+                            </template>
+                          </template>
+                        </view>
+                    </view>
+                </view>
+              </template>
+            </view>
+
+        </view>
+
+        <view class="add-car">
+          <view class="w-100vw bg-#fff flex mb-5">
+            <text
+                class="flex-1 flex justify-center bg-#82A4D7 py-5 rd_l color-#fff font-600"
+                @click="addCar"
+            >
+              加入购物车
+            </text>
+            <text
+                class="flex-1 flex justify-center bg-#5C90DF py-5 rd_r color-#fff font-600"
+                @click="onBuy"
+            >
+              立即购买
+            </text>
+          </view>
         </view>
 
         <u-popup
@@ -500,6 +552,9 @@
               >确认</view>
             </view>
         </u-popup>
+
+        <!-- 底部安全区域组件 -->
+        <up-safe-bottom></up-safe-bottom>
     </view>
 </template>
 
@@ -556,6 +611,18 @@
       border-bottom: 1px solid #D8DEEB;
     }
 
+
+   .price-symbol {
+     font-size: 24rpx;
+     color: #ff4d4f;
+   }
+
+   .price-value {
+     font-size: 32rpx;
+     font-weight: bold;
+     color: #ff4d4f;
+   }
+
   .item-menu-image {
 		width: 200rpx;
 		height: 200rpx;
@@ -569,5 +636,12 @@
   .rd_r {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
+  }
+
+  .add-car {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
   }
 </style>

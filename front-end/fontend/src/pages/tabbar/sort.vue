@@ -4,8 +4,11 @@ import {getAllProductByTypeApi} from "@/api/tabbar/watch";
 import {useTypeStore} from "@/store/modules/type";
 import {onShow} from "@dcloudio/uni-app";
 import {addCarApi} from "@/api/tabbar/car";
+import {useGoodsStore} from "@/store/modules/goods";
 
 const typeStore = useTypeStore()
+const goodsStore = useGoodsStore()
+
 
 const onSearch = () => {
   uni.navigateTo({
@@ -65,6 +68,7 @@ const addCar = async (item) => {
 
 // 跳转到商品详情
 const toDetail = (id) => {
+  goodsStore.productId = id
   uni.navigateTo({
     url: `/pagesA/pages/goodsItem/index?id=${id}`
   })
@@ -141,7 +145,7 @@ onShow(() => {
               <view class="product-info">
                 <text class="product-name">{{ item.productName }}</text>
                 <view class="product-price-row">
-                  <view class="flex gap-2">
+                  <view class="flex items-center gap-2">
                     <template v-if="item?.isSpecial">
                       <view>
                         <text class="price-symbol">¥</text>
