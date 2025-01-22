@@ -71,6 +71,15 @@ public class UserService extends AbstractService<UserMapper,UserEntity> {
         throw new GlobalException("更新用户信息失败");
     }
 
+    public Boolean modifyUserPassword(UserEntity param, UserEntity loginUser) {
+        AssertUtils.assertTrue(Role.BUYER.equals(loginUser.getRole()), "操作异常");
+        UserEntity user = this.getById(loginUser.getId());
+        user.setPwd(MD5Utils.encrypt(param.getPwd()));
+        //移除 TOKEN
+        LoginUser.remove(loginUser.getId());
+        return this.updateById(user);
+    }
+
     public Boolean deleteUserById(String id) {
         return this.removeById(id) && LoginUser.remove(id);
     }

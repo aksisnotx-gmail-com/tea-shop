@@ -7,9 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,8 +35,8 @@ public class UserEntity extends Entity {
 
     //密码
     @Schema(description = "密码")
-    @JsonView({INSERT.class, LOGIN.class,ADMIN_LOGIN.class})
-    @NotBlank(message = "密码不能为空",groups = {INSERT.class, LOGIN.class,ADMIN_LOGIN.class})
+    @JsonView({INSERT.class, LOGIN.class,ADMIN_LOGIN.class,MODIFY_PWD.class})
+    @NotBlank(message = "密码不能为空",groups = {INSERT.class, LOGIN.class,ADMIN_LOGIN.class,MODIFY_PWD.class})
     private String pwd;
 
     //昵称

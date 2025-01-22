@@ -48,6 +48,12 @@ public class UserController extends Controller {
         return RespEntity.success(userLoginService.modifyUserInfo(param));
     }
 
+    @PostMapping("/modify/password")
+    @Operation(summary = "忘记密码 - [小程序]")
+    public RespEntity<Boolean> modifyUserPassword(@RequestBody @JsonView({Entity.MODIFY_PWD.class}) @Validated(Entity.MODIFY_PWD.class) UserEntity param) {
+        return RespEntity.success(userLoginService.modifyUserPassword(param,LoginUser.getLoginUser()));
+    }
+
     @GetMapping("/get")
     @Operation(summary = "获取个人信息 - [后台 & 小程序]")
     public RespEntity<UserEntity> get() {
