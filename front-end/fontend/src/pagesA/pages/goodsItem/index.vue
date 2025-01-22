@@ -5,7 +5,7 @@
 
     import { addCarApi } from '@/api/tabbar/car'
     import { createOrderApi, orderPayApi } from '@/api/tabbar/order'
-    import {onLoad} from "@dcloudio/uni-app";
+    import {onLoad, onShow} from "@dcloudio/uni-app";
 
     const goodsStore = useGoodsStore()
     const addressStore = useAddressStore()
@@ -287,26 +287,39 @@
     }
     onShow(() => {
       if(!Object.keys(addressStore.curAddress).length) return
-      if(!Array.isArray(selected.value) || selected.value.length !== 2) {
-        uni.showToast({
-          title: '请选择商品属性',
-          icon: 'none',
-          duration: 3000
-        })
-        return
-      }
+      // if(!Array.isArray(selected.value) || selected.value.length !== 2) {
+      //   uni.showToast({
+      //     title: '请选择商品属性',
+      //     icon: 'none',
+      //     duration: 3000
+      //   })
+      //   return
+      // }
+      //
+      // const skuId = selected.value[1].productSkuId
+      // const number = countd.value
+      // const totalPrice = selected.value[1].price * number
+      // const size = selected.value[0].value
+      // const deliveryAddress = JSON.stringify(addressStore.curAddress)
+      // const params = {
+      //   skuId,
+      //   number,
+      //   totalPrice,
+      //   size,
+      //   deliveryAddress
+      // }
+      console.log(productInfo.value, 'value')
 
-      const skuId = selected.value[1].productSkuId
-      const number = countd.value
-      const totalPrice = selected.value[1].price * number
-      const size = selected.value[0].value
       const deliveryAddress = JSON.stringify(addressStore.curAddress)
+      const number = countd.value
+      const unitPrice = productInfo.value?.isSpecial ? productInfo.value.specialPrice : productInfo.value.price
+      const totalPrice = unitPrice * number
       const params = {
-        skuId,
+        deliveryAddress,
+        productId: productId.value,
         number,
         totalPrice,
-        size,
-        deliveryAddress
+        remark: ""
       }
 
       payOrder(params)

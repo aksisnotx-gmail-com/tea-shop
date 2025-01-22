@@ -49,6 +49,12 @@
 					}
 				},
 				{
+					"path": "pages/auth/forgetPwd",
+					"style": {
+						"navigationBarTitleText": "忘记密码"
+					}
+				},
+				{
 					"path": "pages/search/index",
 					"style": {
 						"navigationBarTitleText": ""

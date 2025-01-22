@@ -1,81 +1,65 @@
 <script setup>
-import { loginApi } from "@/api/auth";
-import { setToken } from "@/utils/auth";
-import { useUserStore } from '@/store/modules/user'
+import {forgetPasswordApi, loginApi} from "@/api/auth";
+  import {setToken} from "@/utils/auth";
 
-const userStore = useUserStore()
+  const form = ref({
+    phoneNumber: '',
+    pwd: ''
+  })
 
-const form = ref({
-  phoneNumber: '',
-  pwd: ''
-})
-
-const isShowPwd = ref(false)
-const onCheckPwd = () => {
-  isShowPwd.value = !isShowPwd.value
-}
-
-const login = async () => {
-  const phoneNumber = form.value.phoneNumber.toString().trim()
-  // 这里处理登录逻辑
-  if (!phoneNumber || !form.value.pwd) {
-    uni.showToast({
-      title: '请输入账号和密码',
-      icon: 'none'
-    })
-    return
+  const isShowPwd = ref(false)
+  const onCheckPwd = () => {
+    isShowPwd.value = !isShowPwd.value
   }
 
-  try {
-    const res = await loginApi({ phoneNumber, pwd: form.value.pwd })
-    if(res.code === 200) {
-      setToken(res.data.token)
-      userStore.setUserInfo(res.data)
+  const confirmChanges = async () => {
+    const phoneNumber = form.value.phoneNumber.toString().trim()
+    // 这里处理登录逻辑
+    if (!phoneNumber || !form.value.pwd) {
       uni.showToast({
-        title: '登录成功',
+        title: '请输入账号和密码',
         icon: 'none'
       })
-      uni.reLaunch({
-        url: '/pages/home/index'
-      })
-    } else {
+      return
+    }
+
+    try {
+      const res = await forgetPasswordApi({ phoneNumber, pwd: form.value.pwd })
+      if(res.code === 200) {
+        uni.showToast({
+          title: '修改成功',
+          icon: 'none'
+        })
+        uni.reLaunch({
+          url: '/pagesA/pages/auth/login'
+        })
+      } else {
+        uni.showToast({
+          title: res.message || '修改失败',
+          icon: 'none'
+        })
+      }
+    }catch (e) {
       uni.showToast({
-        title: res.message || '登录失败',
+        title: res.message || '修改失败',
         icon: 'none'
       })
     }
-  }catch (e) {
-    uni.showToast({
-      title: res.message || '登录失败',
-      icon: 'none'
-    })
   }
 
-}
-
-const register = () => {
-  // 跳转到注册页面
-  uni.navigateTo({
-    url: '/pagesA/pages/auth/register'
-  })
-}
-
-const forgetPwd = () => {
-  // 跳转到忘记密码页面
-  uni.navigateTo({
-    url: '/pagesA/pages/auth/forgetPwd'
-  })
-}
+  const onBack = () => {
+    uni.navigateBack()
+  }
 </script>
 
 <template>
-  <view class="login-container">
+  <view class="fpwd-container">
     <!-- 背景图 -->
     <view class="login-bg">
       <image
-        src="/pagesA/static/tea-bg.webp"
-        mode="aspectFill"
-        class="bg-image"
+          src="/pagesA/static/tea-bg.webp"
+          mode="aspectFill"
+          class="bg-image"
       />
     </view>
 
@@ -166,93 +150,83 @@ const forgetPwd = () => {
 
       <view class="btn-group">
         <button
-          class="login-btn"
-          @click="login"
-        >登录</button>
+            class="login-btn"
+            @click="confirmChanges"
+        >确认修改</button>
 
         <button
-          class="register-btn"
-          @click="register"
-        >注册</button>
+            class="back-btn"
+            @click="onBack"
+        >返回</button>
       </view>
 
-      <view class="forget-pwd">
-        <text @click="forgetPwd">忘记密码?</text>
-      </view>
     </view>
   </view>
 </template>
 
 <style scoped>
-.login-container {
-  min-height: 100vh;
-  background: #1E4F23;
-}
+  .fpwd-container {
+    min-height: 100vh;
+    background: #1E4F23;
+  }
 
-.login-bg {
-  padding: 20rpx 32rpx;
-  height: 50vh;
-  overflow: hidden;
-}
+  .login-bg {
+    padding: 20rpx 32rpx;
+    height: 50vh;
+    overflow: hidden;
+  }
 
-.bg-image {
-  width: 100%;
-  height: 100%;
-}
+  .bg-image {
+    width: 100%;
+    height: 100%;
+  }
 
-.login-form {
-  padding: 40rpx;
-  border-radius: 40rpx 40rpx 0 0;
-  background: #1E4F23;
-}
+  .login-form {
+    padding: 40rpx;
+    border-radius: 40rpx 40rpx 0 0;
+    background: #1E4F23;
+  }
 
-.form-item {
-  margin-bottom: 30rpx;
-}
+  .form-item {
+    margin-bottom: 30rpx;
+  }
 
-.btn-group {
-  display: flex;
-  gap: 20rpx;
-  margin-top: 60rpx;
-}
+  .btn-group {
+    display: flex;
+    gap: 20rpx;
+    margin-top: 60rpx;
+  }
 
-.login-btn,
-.register-btn {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  text-align: center;
-  border-radius: 8rpx;
-  font-size: 32rpx;
-  border: none;
-}
+  .login-btn,
+  .back-btn {
+    flex: 1;
+    height: 88rpx;
+    line-height: 88rpx;
+    text-align: center;
+    border-radius: 8rpx;
+    font-size: 32rpx;
+    border: none;
+  }
 
-.login-btn {
-  background: #fff;
-  color: #1E4F23;
-}
+  .login-btn {
+    background: #fff;
+    color: #1E4F23;
+  }
 
-.register-btn {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-}
+  .back-btn {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
 
-.forget-pwd {
-  text-align: center;
-  margin-top: 40rpx;
-  color: rgba(255,255,255,0.6);
-  font-size: 28rpx;
-}
+  /* 去除按钮默认样式 */
+  button::after {
+    border: none;
+  }
 
-/* 去除按钮默认样式 */
-button::after {
-  border: none;
-}
-
-button {
-  background: none;
-  padding: 0;
-  margin: 0;
-  line-height: inherit;
-}
+  button {
+    background: none;
+    padding: 0;
+    margin: 0;
+    line-height: inherit;
+  }
 </style>

@@ -70,7 +70,7 @@ const addCar = async (item) => {
 const toDetail = (id) => {
   goodsStore.productId = id
   uni.navigateTo({
-    url: `/pagesA/pages/goodsItem/index?id=${id}`
+    url: `/pagesA/pages/goodsItem/index`
   })
 }
 
