@@ -51,7 +51,7 @@ public class UserController extends Controller {
     @PostMapping("/modify/password")
     @Operation(summary = "忘记密码 - [小程序]")
     public RespEntity<Boolean> modifyUserPassword(@RequestBody @JsonView({Entity.MODIFY_PWD.class}) @Validated(Entity.MODIFY_PWD.class) UserEntity param) {
-        return RespEntity.success(userLoginService.modifyUserPassword(param,LoginUser.getLoginUser()));
+        return RespEntity.success(userLoginService.modifyUserPassword(param));
     }
 
     @GetMapping("/get")

@@ -62,8 +62,8 @@ public class UserEntity extends Entity {
 
     //手机号码
     @Schema(description = "手机号码")
-    @JsonView({INSERT.class, LOGIN.class})
-    @Length(min = 11, max = 11, message = "手机号格式不正确",groups = {INSERT.class, LOGIN.class})
+    @JsonView({INSERT.class, LOGIN.class,MODIFY_PWD.class})
+    @Length(min = 11, max = 11, message = "手机号格式不正确",groups = {INSERT.class, LOGIN.class,MODIFY_PWD.class})
     private String phoneNumber;
 
     @TableField(exist = false)
