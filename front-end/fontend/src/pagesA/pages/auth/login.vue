@@ -16,8 +16,9 @@ const onCheckPwd = () => {
 }
 
 const login = async () => {
+  const phoneNumber = form.value.phoneNumber.toString().trim()
   // 这里处理登录逻辑
-  if (!form.value.phoneNumber || !form.value.pwd) {
+  if (!phoneNumber || !form.value.pwd) {
     uni.showToast({
       title: '请输入账号和密码',
       icon: 'none'
@@ -26,7 +27,7 @@ const login = async () => {
   }
 
   try {
-    const res = await loginApi(form.value)
+    const res = await loginApi({ phoneNumber, pwd: form.value.pwd })
     if(res.code === 200) {
       setToken(res.data.token)
       userStore.setUserInfo(res.data)

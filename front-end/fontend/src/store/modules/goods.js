@@ -2,28 +2,30 @@ import { defineStore } from 'pinia'
 import { getProductByIdApi } from '@/api/home'
 export const useGoodsStore = defineStore('goods', {
     state: () => ({
-        productId: '', // 标题ID
-        productInfo: {
-          carousel: [], // 轮播图
-          priceRange: 0, // 价格区间
-          productName: '', // 商品名称
-          deliveryAddress: '', // 发货地址
-          descUrls: [], // 详情图
-        }, // 商品信息
-        propertiesList: [
-            {
-              id: "1",
-              name: "尺码",
-              attributes: [],
-            },
-            {
-              id: "2",
-              name: "样式",
-              attributes: [],
-            }
-        ],
-        skuData: [],
-        goodsItem: {}
+        // productId: '', // 标题ID
+        // productInfo: {
+        //   carousel: [], // 轮播图
+        //   priceRange: 0, // 价格区间
+        //   productName: '', // 商品名称
+        //   deliveryAddress: '', // 发货地址
+        //   descUrls: [], // 详情图
+        // }, // 商品信息
+        // propertiesList: [
+        //     {
+        //       id: "1",
+        //       name: "尺码",
+        //       attributes: [],
+        //     },
+        //     {
+        //       id: "2",
+        //       name: "样式",
+        //       attributes: [],
+        //     }
+        // ],
+        // skuData: [],
+        // goodsItem: {}
+        productId: '',
+        productInfo: {},
     }),
     actions: {
         async setPropertiesList () {
@@ -31,25 +33,42 @@ export const useGoodsStore = defineStore('goods', {
           if(!id) return
 
           const res = await getProductByIdApi(id)
-          const {
-            carousel,
-            productName,
-            deliveryAddress,
-            descUrls,
-            specCombinationList,
-            specList
-          } = res.data
-          this.productInfo.carousel = carousel
-          this.productInfo.productName = productName
-          this.productInfo.deliveryAddress = deliveryAddress
-          this.productInfo.descUrls = descUrls
-          this.productInfo.priceRange = calculatePriceRange(specCombinationList)
+            this.productInfo = res.data
 
-          this.propertiesList[0].attributes = getUniqueFlatArray(specList.size)
-          this.propertiesList[1].attributes = getStyleList(specCombinationList)
+          // const {
+          //   carousel,
+          //   productName,
+          //   deliveryAddress,
+          //   descUrls,
+          //   specCombinationList,
+          //   specList
+          // } = res.data
+          // this.productInfo.carousel = carousel
+          // this.productInfo.productName = productName
+          // this.productInfo.deliveryAddress = deliveryAddress
+          // this.productInfo.descUrls = descUrls
+          // this.productInfo.priceRange = calculatePriceRange(specCombinationList)
+          //
+          // this.propertiesList[0].attributes = getUniqueFlatArray(specList.size)
+          // this.propertiesList[1].attributes = getStyleList(specCombinationList)
+          //
+          // this.skuData = transformSpecCombinationToList(specCombinationList)
 
-          this.skuData = transformSpecCombinationToList(specCombinationList)
-
+            // "id": "2",
+            //     "createTime": "2025-01-15 18:45:50",
+            //     "updateTime": "2025-01-19 16:53:09",
+            //     "carousel": [],
+            //     "productName": "绿茶",
+            //     "price": 100,
+            //     "specialPrice": 0,
+            //     "stock": 9,
+            //     "isSpecial": 0,
+            //     "salesQuantity": 2000,
+            //     "productTypeIds": [
+            //     "1",
+            //     "2",
+            //     "3"
+            // ]
         }
     }
 })
