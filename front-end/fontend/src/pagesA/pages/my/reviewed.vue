@@ -25,7 +25,7 @@
                 if(confirm) {
                     const res = await delMyEvaluateApi(commentId, orderId)
                     if(res.code === 200) {
-                        
+
                         await getMyEvaluate(pageInfo.current)
 
                         uni.showToast({
@@ -41,7 +41,7 @@
 
     onReachBottom(async () => {
         if(!evaluateList.value.length) return
-        
+
 		uni.showLoading({
             title: '加载中'
         });
@@ -70,7 +70,7 @@
         uni.showLoading({
             title: '加载中'
         })
-    }) 
+    })
 </script>
 
 <template>
@@ -85,15 +85,16 @@
         </template>
         <template v-for="item of evaluateList" :key="item.comment.id">
             <view class="bg-#fff px-3 mb-3">
-                <view 
+                <view
                     class="h-10 layout-slide font-600 color-#666"
                 >
                     <text class="text-3.5">{{ item.comment.createTime }}</text>
                     <text @click="delEvaluate(item.comment.id, item.order.id)">删除</text>
                 </view>
                 <view class="color-#666 flex flex-col">
+                    <up-rate :value="item.comment.starRating" readonly></up-rate>
                     <text class="comment">{{ item.comment.commentContent }}</text>
-                    <view class="flex justify-around">
+                    <view class="flex gap-2 flex-wrap">
                         <template v-if="item.comment.commentImgUrl">
                             <template v-for="url of item.comment.commentImgUrl" :key="url">
                                 <image
@@ -107,15 +108,29 @@
                 </view>
                 <u-divider text="" hairline></u-divider>
                 <view class="flex gap-3 pb-5">
+<!--                    <image-->
+<!--                        class="w-25 h-15"-->
+<!--                        v-if="item.order.productSku"-->
+<!--                        :src="item.order.productSku.attribute.carouselUrl" -->
+<!--                        mode="aspectFit"-->
+<!--                    />-->
+                  <template v-if="!item.order.product.carousel.length">
                     <image
+                        src="/static/load-error.jpg"
+                        mode="aspectFill"
                         class="w-25 h-15"
-                        v-if="item.order.productSku"
-                        :src="item.order.productSku.attribute.carouselUrl" 
-                        mode="aspectFit"
                     />
+                  </template>
+                  <template v-else>
+                    <image
+                        :src="item.order.product.carousel[0]"
+                        mode="aspectFill"
+                        class="w-25 h-15"
+                    />
+                  </template>
                     <view class="flex flex-col gap-1">
-                        <text class="text-3 font-600">{{ item.order.productDetail.productName }}</text>
-                        <text class="text-3 color-#999">{{ item.order.productSku.attribute.desc }}</text>
+                        <text class="text-3 font-600">{{ item.order.product.productName }}</text>
+<!--                        <text class="text-3 color-#999">{{ item.order.productSku.attribute.desc }}</text>-->
                     </view>
                 </view>
             </view>

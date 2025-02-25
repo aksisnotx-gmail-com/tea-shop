@@ -42,4 +42,5 @@ public class Entity implements Serializable {
 
     public interface LOGIN{}
     public interface ADMIN_LOGIN{}
+    public interface MODIFY_PWD{}
 }

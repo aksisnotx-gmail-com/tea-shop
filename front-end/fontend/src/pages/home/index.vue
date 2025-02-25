@@ -217,6 +217,7 @@
                 <template v-for="item of recommendProducts" :key="item.id">
                     <view
                         class="hot-sales-item"
+                        @click="toDetail(item.id)"
                     >
                       <template v-if="!item.carousel.length">
                         <image
@@ -253,7 +254,7 @@
                               </view>
                             </template>
                           </view>
-                          <view class="cart-icon" @click="addCar(item)">
+                          <view class="cart-icon" @click.stop="addCar(item)">
                             <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
                           </view>
                         </view>

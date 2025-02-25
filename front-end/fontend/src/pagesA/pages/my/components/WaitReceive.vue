@@ -1,5 +1,5 @@
 <script setup>
-    import { getWaitReceiveApi } from '@/api/tabbar/my'
+    import {getOrderByStatusApi, ORDER_STATUS} from '@/api/tabbar/my'
     import { orderReceiveApi, orderApplyRefundApi } from '@/api/tabbar/order'
     import { JumpDetail } from '../utils/index'
     const pageInfo = reactive({
@@ -10,7 +10,8 @@
 
     const orderList = ref([])
     const getWaitReceive = async (currentt = 1) => {
-        const res = await getWaitReceiveApi(currentt)
+        // const res = await getWaitReceiveApi(currentt)
+        const res = await getOrderByStatusApi(ORDER_STATUS.SHIP_ORDER, currentt)
         const { records, total, size, current } = res.data
         pageInfo.total = total
         pageInfo.size = size
@@ -29,7 +30,7 @@
                         uni.showToast({
                             title: '确认收货成功',
                             icon: 'success',
-                            mask: true, 
+                            mask: true,
                             duration: 2000
                         })
                         getWaitReceive()
@@ -50,7 +51,7 @@
                         uni.showToast({
                             title: '申请成功, 请等待~',
                             icon: 'success',
-                            mask: true, 
+                            mask: true,
                             duration: 2000
                         })
                         getWaitReceive(pageInfo.current)
@@ -63,7 +64,7 @@
     onMounted(() => {
         getWaitReceive()
     })
-    
+
     const mapOrderState = (state) => {
         const ORDER_STATE = {
             'PLACE_ORDER':{front:'待付款',back:'待付款'},
@@ -79,12 +80,12 @@
         return ORDER_STATE[state] ? ORDER_STATE[state].front : ''
     }
 
-    onReachBottom(async () => {		
-		uni.showLoading({
-            title: '加载中'
-        });
-		const currentTotal = pageInfo.current * pageInfo.size
-		if(currentTotal < pageInfo.total) {
+    onReachBottom(async () => {
+      uni.showLoading({
+          title: '加载中'
+      });
+      const currentTotal = pageInfo.current * pageInfo.size
+      if(currentTotal < pageInfo.total) {
             pageInfo.current++
             await getWaitReceive(pageInfo.current)
             uni.hideLoading()
@@ -97,7 +98,7 @@
                 duration: 1000
             })
         }
-	})
+    })
 
     onPullDownRefresh(async () => {
         const len = orderList.value.length
@@ -126,22 +127,31 @@
         <template v-else>
             <template v-for="item of orderList" :key="item.id">
                 <view class="item_card">
-                    <view 
+                    <view
                         class="flex gap-4"
                         @click="JumpDetail(item.id)"
                     >
+                      <template v-if="!item.product.carousel.length">
                         <image
-                            :src="item.productSku.attribute.carouselUrl"
+                            src="/static/load-error.jpg"
                             mode="aspectFill"
                             class="img"
                         />
+                      </template>
+                      <template v-else>
+                        <image
+                            :src="item.product.carousel[0]"
+                            mode="aspectFill"
+                            class="img"
+                        />
+                      </template>
                         <view class="w-60 flex flex-col justify-between">
-                            <text class="name">{{ item.productDetail.productName }}</text>
-                            <view class="flex items-center gap-3 text-3 color-#666">
-                                <text>{{ item.productSku.attribute.desc }}</text>
-                                <text>{{ item.size }}</text>
-                                <text class="font-600">x {{ item.skuNumber }}</text>
-                            </view>
+                          <text class="name">{{ item.product.productName }}</text>
+                          <view class="flex items-center gap-3 text-3 color-#666">
+                            <!--                                <text>{{ item.productSku.attribute.desc }}</text>-->
+                            <!--                                <text>{{ item.size }}</text>-->
+                            <text class="font-600">x {{ item.number }}</text>
+                          </view>
                             <view class="layout-slide">
                                 <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
                                 <text class="text-3.5 color-#FF679A">{{ mapOrderState(item.state) }}</text>
@@ -149,21 +159,21 @@
                         </view>
                     </view>
                     <view class="mt-3 pt-2 flex flex-col items-end gap-3 border_t">
-                        <view class="flex gap-3">
-                            <text class="text-3.5">共{{ item.skuNumber }}件商品, 买家实付</text>
-                            <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
-                        </view>
+                      <view class="flex gap-3">
+                        <text class="text-3.5">共{{ item.number }}件商品, 买家实付</text>
+                        <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
+                      </view>
                         <view class="text-3 flex gap-5">
                             <text class="border_xy py-1 px-1.5"
                                 @click="applyRefundOrder(item.id)"
                             >申请退款</text>
-                            <template v-if="item.state == 'MAKE_PAYMENT'">
-                                <text 
+                            <template v-if="item.state === 'MAKE_PAYMENT'">
+                                <text
                                     class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                 >待发货</text>
                             </template>
                             <template v-else>
-                                <text 
+                                <text
                                     class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                     @click="onReceive(item.id)"
                                 >确认收货</text>

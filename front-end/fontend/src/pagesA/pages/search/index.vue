@@ -1,5 +1,7 @@
 <script setup>
 import {delSearchHistoryApi, getSearchHistoryApi, searchProductApi} from "@/api/tabbar/my";
+import {addCarApi} from "@/api/tabbar/car";
+import {useGoodsStore} from "@/store/modules/goods";
 
 const searchVal = ref('')
 const showResult = ref(false) // 控制显示搜索结果还是历史记录
@@ -115,6 +117,40 @@ const loadData = async () => {
   loading.value = false
 }
 
+const addCar = async (item) => {
+  console.log("=>(index.vue:119) item", item);
+  const { id } = item
+  try {
+    const res = await addCarApi({ productId: id, number: 1})
+    if(res.data) {
+      uni.showToast({
+        title: '加入购物车成功',
+        icon: 'success',
+        duration: 2000
+      })
+    } else {
+      uni.showToast({
+        title: '加入购物车失败',
+        icon: 'error',
+        duration: 2000
+      })
+    }
+  } catch (e) {
+    uni.showToast({
+      title: '下单失败',
+      icon: 'error',
+    })
+  }
+}
+
+const goodsStore = useGoodsStore()
+const toDetail = (id) => {
+  goodsStore.productId = id
+  uni.navigateTo({
+    url: '/pagesA/pages/goodsItem/index'
+  })
+}
+
 async function apiInit ()  {
   await uni.showLoading({
     title: '加载中...',
@@ -214,6 +250,7 @@ onMounted(()   =>  {
                 v-for="item in searchResults"
                 :key="item.id"
                 class="goods-item"
+                @click="toDetail(item.id)"
             >
               <template v-if="!item.carousel.length">
                 <up-image
@@ -241,7 +278,7 @@ onMounted(()   =>  {
                       <text class="original-price">¥{{ item.specialPrice }}</text>
                     </template>
                   </view>
-                  <view class="cart-btn">
+                  <view class="cart-btn" @click.stop="addCar(item)">
                     <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
                   </view>
                 </view>

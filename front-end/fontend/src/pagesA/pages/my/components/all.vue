@@ -2,7 +2,7 @@
     import { getAllOrderApi } from '@/api/tabbar/my'
     import { orderCloseApi, orderPayApi, orderReceiveApi, orderApplyRefundApi, delOrderApi } from '@/api/tabbar/order'
     import { JumpDetail } from '../utils/index'
-    
+
     const pageInfo = reactive({
         current: 1,
         size: 20,
@@ -74,7 +74,7 @@
                         uni.showToast({
                             title: '确认收货成功',
                             icon: 'success',
-                            mask: true, 
+                            mask: true,
                             duration: 2000
                         })
                         getAllOrder(pageInfo.current)
@@ -95,7 +95,7 @@
                         uni.showToast({
                             title: '申请成功, 请等待~',
                             icon: 'success',
-                            mask: true, 
+                            mask: true,
                             duration: 2000
                         })
                         getAllOrder(pageInfo.current)
@@ -116,7 +116,7 @@
                         uni.showToast({
                             title: '删除成功',
                             icon: 'success',
-                            mask: true, 
+                            mask: true,
                             duration: 2000
                         })
                         getWaitReceive(pageInfo.current)
@@ -125,18 +125,18 @@
             }
         })
     }
-    
+
     const onEvaluate = (orderId) => {
         uni.navigateTo({
             url: `/pagesA/pages/my/evaluate?orderid=${orderId}`
         })
     }
-    
+
     onMounted(() => {
         getAllOrder()
     })
-    
-    onReachBottom(async () => {		
+
+    onReachBottom(async () => {
 		uni.showLoading({
             title: '加载中'
         });
@@ -196,22 +196,31 @@
 
         <template v-else>
             <template v-for="item of orderList" :key="item.id">
-                <view 
+                <view
                     class="item_card"
                 >
                     <view class="flex gap-4">
+                      <template v-if="!item.product.carousel.length">
                         <image
-                            :src="item.productSku.attribute.carouselUrl"
+                            src="/static/load-error.jpg"
                             mode="aspectFill"
                             class="img"
                         />
+                      </template>
+                      <template v-else>
+                        <image
+                            :src="item.product.carousel[0]"
+                            mode="aspectFill"
+                            class="img"
+                        />
+                      </template>
                         <view class="w-60 flex flex-col justify-between">
-                            <text class="name">{{ item.productDetail.productName }}</text>
-                            <view class="flex items-center gap-3 text-3 color-#666">
-                                <text>{{ item.productSku.attribute.desc }}</text>
-                                <text>{{ item.size }}</text>
-                                <text class="font-600">x {{ item.skuNumber }}</text>
-                            </view>
+                          <text class="name">{{ item.product.productName }}</text>
+                          <view class="flex items-center gap-3 text-3 color-#666">
+                            <!--                                <text>{{ item.productSku.attribute.desc }}</text>-->
+                            <!--                                <text>{{ item.size }}</text>-->
+                            <text class="font-600">x {{ item.number }}</text>
+                          </view>
                             <view class="layout-slide">
                                 <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
                                 <text class="text-3.5 color-#FF679A">{{ mapOrderState(item.state) }}</text>
@@ -219,20 +228,20 @@
                         </view>
                     </view>
                     <view class="mt-3 pt-2 flex flex-col items-end gap-3 border_t">
-                        <view 
+                        <view
                             class="flex gap-3"
                             @click="JumpDetail(item.id)"
                         >
-                            <text class="text-3.5">共{{ item.skuNumber }}件商品, 买家实付</text>
-                            <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
+                          <text class="text-3.5">共{{ item.number }}件商品, 买家实付</text>
+                          <text class="color-#DC143C font-600">¥ {{ item.totalPrice }}</text>
                         </view>
                         <template v-if="item.state == 'PLACE_ORDER'">
                             <view class="text-3 flex gap-5">
-                                <text 
-                                    class="border_xy py-1 px-1.5" 
+                                <text
+                                    class="border_xy py-1 px-1.5"
                                     @click="closeOrder(item.id)"
                                 >关闭订单</text>
-                                <text 
+                                <text
                                     class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                     @click="onPay(item.id)"
                                 >立即付款</text>
@@ -243,18 +252,18 @@
                                 <text class="border_xy py-1 px-1.5"
                                 @click="applyRefundOrder(item.id)"
                                 >申请退款</text>
-                                <text 
+                                <text
                                     class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                 >待发货</text>
                             </view>
                         </template>
                         <template v-else-if="item.state == 'SHIP_ORDER'">
                             <view class="text-3 flex gap-5">
-                                <text 
+                                <text
                                     class="border_xy py-1 px-1.5"
                                     @click="applyRefundOrder(item.id)"
                                 >申请退款</text>
-                                <text 
+                                <text
                                     class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                     @click="onReceive(item.id)"
                                 >确认收货</text>
@@ -262,7 +271,7 @@
                         </template>
                         <template v-else-if="item.state == 'CONFIRM_RECEIPT'">
                             <view class="text-3 flex gap-5">
-                                <text 
+                                <text
                                 class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A"
                                 @click="onEvaluate(item.id)"
                                 >评价</text>
@@ -270,8 +279,8 @@
                         </template>
                         <template v-else>
                             <view class="text-3 flex gap-5">
-                                <text 
-                                    class="border_xy py-1 px-1.5" 
+                                <text
+                                    class="border_xy py-1 px-1.5"
                                     @click="delOrder(item.id)"
                                 >删除订单</text>
                                 <text class="b-1 b-solid b-#FF679A rd-4.5 py-1 px-1.5 color-#FF679A">{{ mapOrderState(item.state) }}</text>

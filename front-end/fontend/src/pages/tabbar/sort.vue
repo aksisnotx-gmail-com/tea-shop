@@ -3,8 +3,12 @@ import {getProductTypeApi} from "@/api/home";
 import {getAllProductByTypeApi} from "@/api/tabbar/watch";
 import {useTypeStore} from "@/store/modules/type";
 import {onShow} from "@dcloudio/uni-app";
+import {addCarApi} from "@/api/tabbar/car";
+import {useGoodsStore} from "@/store/modules/goods";
 
 const typeStore = useTypeStore()
+const goodsStore = useGoodsStore()
+
 
 const onSearch = () => {
   uni.navigateTo({
@@ -37,10 +41,36 @@ const switchCategory = async (id) => {
   productList.value = res.data.records
 }
 
+const addCar = async (item) => {
+  const { id } = item
+  try {
+    const res = await addCarApi({ productId: id, number: 1})
+    if(res.data) {
+      uni.showToast({
+        title: '加入购物车成功',
+        icon: 'success',
+        duration: 2000
+      })
+    } else {
+      uni.showToast({
+        title: '加入购物车失败',
+        icon: 'error',
+        duration: 2000
+      })
+    }
+  } catch (e) {
+    uni.showToast({
+      title: '下单失败',
+      icon: 'error',
+    })
+  }
+}
+
 // 跳转到商品详情
 const toDetail = (id) => {
+  goodsStore.productId = id
   uni.navigateTo({
-    url: `/pagesA/pages/goodsItem/index?id=${id}`
+    url: `/pagesA/pages/goodsItem/index`
   })
 }
 
@@ -115,7 +145,7 @@ onShow(() => {
               <view class="product-info">
                 <text class="product-name">{{ item.productName }}</text>
                 <view class="product-price-row">
-                  <view class="flex gap-2">
+                  <view class="flex items-center gap-2">
                     <template v-if="item?.isSpecial">
                       <view>
                         <text class="price-symbol">¥</text>
@@ -133,7 +163,7 @@ onShow(() => {
                       </view>
                     </template>
                   </view>
-                  <view class="cart-btn">
+                  <view class="cart-btn" @click.stop="addCar(item)">
                     <up-icon name="shopping-cart" size="40rpx" color="#fff"></up-icon>
                   </view>
                 </view>

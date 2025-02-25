@@ -34,3 +34,12 @@ export function updateApi (data) {
         data
     })
 }
+
+// 忘记密码
+export function forgetPasswordApi (data) {
+    return service({
+        url: 'user/auth/modify/password',
+        method: 'post',
+        data
+    })
+}

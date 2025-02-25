@@ -17,7 +17,6 @@ export const useTypeStore = defineStore("type", {
             this.tabbar = res.data.map(item => ({ ...item, proList: [] }))
         },
         setTypeId(id) {
-            console.log("=>(type.js:24) id", id);
             this.typeId = id
         }
     }
