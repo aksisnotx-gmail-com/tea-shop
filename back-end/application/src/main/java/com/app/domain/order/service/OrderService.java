@@ -176,7 +176,7 @@ public class OrderService extends AbstractService<OrderMapper, OrderEntity> {
                 stream().
                 //把筛选未评价的商品
                 filter(t -> OrderEntity.UN_EVALUATE.equals(t.getIsEvaluate())).toList();
-        page.setTotal(list.size());
+        page.setTotal(page.getTotal());
         page.setRecords(list);
         return page;
     }
